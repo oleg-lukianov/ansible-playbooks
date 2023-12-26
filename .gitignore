@@ -1,0 +1,15 @@
+*.retry
+*.pyc
+venv*/
+*.swn
+*.swl
+*.swp
+*.swo
+vault_password
+
+/.idea/
+roles/vault_cluster/files/vault_*
+roles/vault_cluster/files/vault
+.vscode/
+
+.DS_Store

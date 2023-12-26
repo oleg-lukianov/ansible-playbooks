@@ -1,0 +1,10 @@
+all:
+  vars:
+    ansible_become: true
+    ansible_become_method: su
+    ansible_become_exe: "sudo su -"
+    ansible_become_user: root
+erlan.pro:
+  hosts:
+    192.168.2.197:
+  vars:
