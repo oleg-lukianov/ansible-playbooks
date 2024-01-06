@@ -1,0 +1,8 @@
+# Update configs
+0 0 * * * bash /storage/emulated/0/scripts/termux/github_update.sh
+1 0 * * * busybox crontab /storage/emulated/0/scripts/termux/crontab
+
+# backup
+3 0 * * * bash /storage/emulated/0/github/prod/backup_android_lftp_rsync.sh -lftp 2>&1 | tee /storage/emulated/0/scripts/backup/backup_android_lftp_rsync.log
+4 0 * * * bash /storage/emulated/0/scripts/termux/tar.sh -create
+0 1 * * * bash /storage/emulated/0/scripts/termux/tar.sh -delete | tee -a /storage/emulated/0/scripts/backup/tar.log
