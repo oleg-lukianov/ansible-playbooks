@@ -32,7 +32,3 @@ Encrypt/decrypt inventory
 `ansible-vault edit --vault-password-file .vault_pass inventory`
 `ansible-vault decrypt --vault-password-file .vault_pass inventory`
 `ansible-vault encrypt --vault-password-file .vault_pass inventory`
-
-rm /data/data/com.termux/files/usr/etc/profile.d/welcome_android.sh
-rm /data/data/com.termux/files/usr/etc/profile.d/start.sh
-rm -rf /data/data/com.termux/files/usr/var/spool/cron/crontabs

@@ -33,7 +33,9 @@
     - nginx
     - which
     state: latest
-  when: not ansible_check_mode
+  when:
+  - not ansible_check_mode
+  - hostname == "m52.pro"
 
 - name: Git config email
   tags: git
@@ -66,7 +68,7 @@
   tags:
   - git
   - start
-  - tar
+  - tar2
   - cron
   - crontab
   ansible.builtin.file:
@@ -77,9 +79,9 @@
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_id }}"
   loop:
-    - { dir: /storage/emulated/0/scripts/github, perm: '0755' }
-    - { dir: /storage/emulated/0/scripts/backup, perm: '0755' }
-    - { dir: /storage/emulated/0/scripts/termux, perm: '0755' }
+    - { dir: /storage/emulated/0/github, perm: '0770' }
+    - { dir: /storage/emulated/0/scripts/backup, perm: '0770' }
+    - { dir: /storage/emulated/0/scripts/termux, perm: '0770' }
     - { dir: /data/data/com.termux/files/usr/var/spool/cron/crontabs, perm: '0700' }
 
 - name: Git clone
@@ -102,7 +104,7 @@
     dest: /storage/emulated/0/scripts/termux/
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_id }}"
-    mode: '0755'
+    mode: '0660'
 
 - name: Copy files from template
   tags:
@@ -110,14 +112,15 @@
   - cron
   - crontab
   - template
+  - start
   ansible.builtin.template:
     src: "termux/{{ item.j2 }}"
-    dest: "/storage/emulated/0/scripts/termux/{{ item.name }}"
+    dest: "{{ item.path }}{{ item.name }}"
     mode: '0660'
   loop:
-    - { j2: bash.bashrc.j2, name: bash.bashrc }
-    - { j2: crontab.j2, name: crontab }
-    - { j2: backup_android_lftp_rsync.conf.j2, name: backup_android_lftp_rsync.conf }
+    - { j2: bash.bashrc.j2, name: bash.bashrc, path: /storage/emulated/0/scripts/termux/ }
+    - { j2: crontab.j2, name: crontab, path: /storage/emulated/0/scripts/termux/ }
+    - { j2: backup_android_lftp_rsync.conf.j2, name: backup_android_lftp_rsync.conf, path: /storage/emulated/0/github/prod/ }
 
 - name: Create a symbolic link
   tags:
@@ -144,7 +147,7 @@
     group: "{{ ansible_user_id }}"
     state: link
   loop:
-    - { src: /storage/emulated/0/scripts/termux/aliases_list.sh, dest: /data/data/com.termux/files/usr/etc/profile.d/aliases_list.sh }
+    - { src: /storage/emulated/0/scripts/welcome_aliases_list.sh, dest: /data/data/com.termux/files/usr/etc/profile.d/welcome_aliases_list.sh }
   when: hostname == "a71.pro"
 
 - name: Touch a file 'crontab'
