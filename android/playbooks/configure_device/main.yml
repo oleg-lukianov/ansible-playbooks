@@ -1,0 +1,12 @@
+---
+- name: Configure device
+  hosts:
+  - m52_pro
+  - a71_pro
+  - 9_pro
+  gather_facts: true
+  roles:
+    - roles/configure_device
+  vars:
+    ansible_become: false
+    ansible_connection: ssh

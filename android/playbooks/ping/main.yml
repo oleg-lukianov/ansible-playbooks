@@ -1,0 +1,11 @@
+---
+- name: Ping server
+  hosts: all
+  gather_facts: true
+  become: true
+  roles:
+    - { role: 'roles/ping' }
+  vars:
+    ansible_become: false
+    ansible_become_user: root
+    ansible_connection: ssh
