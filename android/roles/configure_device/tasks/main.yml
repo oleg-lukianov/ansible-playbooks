@@ -1,60 +1,64 @@
 - name: Upgrade all packages
   tags: install
-  ansible.builtin.shell: pkg upgrade -y
+  ansible.builtin.command: pkg upgrade -y
+  register: upgrade_status
+  changed_when: upgrade_status.rc != 0
 
 - name: Upgrade all packages again
   tags: install
-  ansible.builtin.shell: pkg upgrade -y
+  ansible.builtin.command: pkg upgrade -y
+  register: upgrade_status
+  changed_when: upgrade_status.rc != 0
 
 - name: Install packages
   tags: install
-  pkg5:
+  community.general.pkg5:
     name:
-    - busybox
-    - openssl
-    - lftp
-    - rsync
-    - curl
-    - vim
-    - git
-    - mc
-    - bmon
-    - sshpass
-    - wget
-    - python
-    - traceroute
-    - dnsutils
-    - iproute2
-    - file
-    - traceroute
-    - iperf3
-    - man
-    - nmap
-    - nginx
-    - which
+      - busybox
+      - openssl
+      - lftp
+      - rsync
+      - curl
+      - vim
+      - git
+      - mc
+      - bmon
+      - sshpass
+      - wget
+      - python
+      - traceroute
+      - dnsutils
+      - iproute2
+      - file
+      - traceroute
+      - iperf3
+      - man
+      - nmap
+      - nginx
+      - which
     state: latest
   when:
-  - not ansible_check_mode
-  - hostname == "m52.pro"
+    - not ansible_check_mode
+    - hostname == "m52.pro"
 
 - name: Git config email
   tags: git
-  git_config:
+  community.general.git_config:
     name: user.email
     scope: global
     value: "{{ GIT_EMAIL }}"
 
 - name: Git config name
   tags: git
-  git_config:
+  community.general.git_config:
     name: user.name
     scope: global
     value: "{{ GIT_NAME }}"
 
 - name: Git config safe.directory
   tags:
-  - git
-  - safe
+    - git
+    - safe
   community.general.git_config:
     name: safe.directory
     scope: global
@@ -66,11 +70,11 @@
 
 - name: Create a directory if it does not exist
   tags:
-  - git
-  - start
-  - tar2
-  - cron
-  - crontab
+    - git
+    - start
+    - tar2
+    - cron
+    - crontab
   ansible.builtin.file:
     path: "{{ item.dir }}"
     force: true
@@ -89,16 +93,16 @@
   ansible.builtin.git:
     repo: https://github.com/oleg-lukianov/prod.git
     dest: /storage/emulated/0/github/prod
-    update: yes
+    update: true
     force: true
     version: main
 
 - name: Copy scripts 'termux/'
   tags:
-  - start
-  - tar
-  - scripts
-  - bash
+    - start
+    - tar
+    - scripts
+    - bash
   ansible.builtin.copy:
     src: termux/
     dest: /storage/emulated/0/scripts/termux/
@@ -108,11 +112,11 @@
 
 - name: Copy files from template
   tags:
-  - bash
-  - cron
-  - crontab
-  - template
-  - start
+    - bash
+    - cron
+    - crontab
+    - template
+    - start
   ansible.builtin.template:
     src: "termux/{{ item.j2 }}"
     dest: "{{ item.path }}{{ item.name }}"
@@ -124,9 +128,9 @@
 
 - name: Create a symbolic link
   tags:
-  - start
-  - welcome
-  - bash
+    - start
+    - welcome
+    - bash
   ansible.builtin.file:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -152,8 +156,8 @@
 
 - name: Touch a file 'crontab'
   tags:
-  - cron
-  - crontab
+    - cron
+    - crontab
   ansible.builtin.file:
     path: "/data/data/com.termux/files/usr/var/spool/cron/crontabs/{{ ansible_user_id }}"
     state: touch
@@ -161,6 +165,8 @@
 
 - name: Crontab turn on
   tags:
-  - cron
-  - crontab
-  ansible.builtin.shell: busybox crontab /storage/emulated/0/scripts/termux/crontab
+    - cron
+    - crontab
+  ansible.builtin.command: busybox crontab /storage/emulated/0/scripts/termux/crontab
+  register: crontab_status
+  changed_when: crontab_status.rc != 0
