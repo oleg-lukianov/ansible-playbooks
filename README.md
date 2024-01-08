@@ -17,8 +17,8 @@ Install from BREW
 `arch -arm64 brew install ansible-lint python-markupsafe`  
 
 Check code  
-`ansible-lint android/playbooks/*`  
-`ansible-lint android/roles/*`  
+`ansible-lint playbooks/*`  
+`ansible-lint roles/*`  
 
 ## Help commands
 Run from specific task  
