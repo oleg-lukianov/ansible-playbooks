@@ -6,7 +6,7 @@ Ping hosts
 `ansible-playbook --vault-password-file .vault_pass -i inventory playbooks/ping/main.yml --limit m52_pro`  
 
 Update device  
-`ansible-playbook --vault-password-file .vault_pass -i inventory playbooks/configure_device/main.yml --limit m52_pro`  
+`ansible-playbook --vault-password-file .vault_pass -i inventory playbooks/configure_device/main.yml --limit m52_pro --tag template`  
 
 ## ansible-lint
 Update ansible-lint from PIP  
@@ -29,3 +29,6 @@ Encrypt/decrypt inventory
 `ansible-vault edit --vault-password-file .vault_pass inventory`  
 `ansible-vault decrypt --vault-password-file .vault_pass inventory`  
 `ansible-vault encrypt --vault-password-file .vault_pass inventory`  
+
+Create new password  
+`cat /dev/urandom | tr -dc 'A-Za-z0-9!=' | head -c 32`
