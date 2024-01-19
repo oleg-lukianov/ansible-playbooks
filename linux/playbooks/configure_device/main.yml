@@ -1,7 +1,7 @@
 ---
 - name: Configure device
   hosts:
-  - erlan_pro
+   - erlan_pro
   gather_facts: true
   roles:
-    - roles/configure_device
+   - roles/configure_device
