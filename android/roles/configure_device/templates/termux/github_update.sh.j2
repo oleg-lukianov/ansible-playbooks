@@ -1,0 +1,15 @@
+#!/bin/bash
+
+cd /storage/emulated/0/github/prod || exit;
+git checkout main;
+git reset --hard origin/HEAD;
+git pull origin main -f;
+
+{% if hostname == "m52.pro" or hostname == "a71.pro" %}
+cd /storage/emulated/0/github/private || exit;
+git checkout main;
+git reset --hard origin/HEAD;
+git pull origin main -f;
+{% endif %}
+
+exit 0;

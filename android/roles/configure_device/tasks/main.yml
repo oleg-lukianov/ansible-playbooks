@@ -14,27 +14,27 @@
   tags: install
   community.general.pkg5:
     name:
-      - busybox
-      - openssl
-      - lftp
-      - rsync
-      - curl
-      - vim
-      - git
-      - mc
       - bmon
-      - sshpass
-      - wget
-      - python
-      - traceroute
+      - busybox
+      - curl
       - dnsutils
-      - iproute2
       - file
-      - traceroute
+      - git
       - iperf3
+      - iproute2
+      - lftp
       - man
-      - nmap
+      - mc
       - nginx
+      - nmap
+      - openssl
+      - python
+      - rsync
+      - sshpass
+      - traceroute
+      - traceroute
+      - vim
+      - wget
       - which
     state: latest
   when:
@@ -88,7 +88,7 @@
     - { dir: /storage/emulated/0/scripts/termux, perm: '0770' }
     - { dir: /data/data/com.termux/files/usr/var/spool/cron/crontabs, perm: '0700' }
 
-- name: Git clone
+- name: Git clone "prod"
   tags: git
   ansible.builtin.git:
     repo: https://github.com/oleg-lukianov/prod.git
@@ -96,6 +96,17 @@
     update: true
     force: true
     version: main
+
+- name: Git clone "private"
+  tags: git
+  ansible.builtin.git:
+    repo: git@github.com:oleg-lukianov/private.git
+    dest: /storage/emulated/0/github/private
+    update: true
+    force: true
+    version: main
+  when:
+    - hostname == "m52.pro" or hostname == "a71.pro"
 
 - name: Copy scripts 'termux/'
   tags:
@@ -125,6 +136,7 @@
     - { j2: bash.bashrc.j2, name: bash.bashrc, path: /storage/emulated/0/scripts/termux/ }
     - { j2: crontab.j2, name: crontab, path: /storage/emulated/0/scripts/termux/ }
     - { j2: backup_android_lftp_rsync.conf.j2, name: backup_android_lftp_rsync.conf, path: /storage/emulated/0/github/prod/ }
+    - { j2: github_update.sh.j2, name: github_update.sh, path: /storage/emulated/0/scripts/termux/ }
 
 - name: Create a symbolic link
   tags:

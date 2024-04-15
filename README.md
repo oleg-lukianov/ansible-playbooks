@@ -25,6 +25,7 @@ Run from specific task
 `ansible-playbook --vault-password-file .vault_pass -i inventory playbooks/configure_device/main.yml --limit m52 --start-at-task="Create a symbolic link for 'a71.pro'"`
 
 Encrypt/decrypt inventory  
+`cd android`  
 `ansible-vault view --vault-password-file .vault_pass inventory`  
 `ansible-vault edit --vault-password-file .vault_pass inventory`  
 `ansible-vault decrypt --vault-password-file .vault_pass inventory`  
