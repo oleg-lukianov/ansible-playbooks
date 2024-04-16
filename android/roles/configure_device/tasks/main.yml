@@ -66,6 +66,7 @@
     add_mode: add
   loop:
     - { path: /storage/emulated/0/github/prod }
+    - { path: /storage/emulated/0/github/private }
     - { path: /storage/emulated/0/scripts }
 
 - name: Create a directory if it does not exist

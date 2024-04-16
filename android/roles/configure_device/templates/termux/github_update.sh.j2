@@ -1,11 +1,13 @@
 #!/bin/bash
 
+echo "Update repo 'prod'"
 cd /storage/emulated/0/github/prod || exit;
 git checkout main;
 git reset --hard origin/HEAD;
 git pull origin main -f;
 
 {% if hostname == "m52.pro" or hostname == "a71.pro" %}
+echo "Update repo 'private'"
 cd /storage/emulated/0/github/private || exit;
 git checkout main;
 git reset --hard origin/HEAD;
