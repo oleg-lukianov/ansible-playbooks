@@ -22,5 +22,5 @@ fi
 
 #  tcpsvd -vE 0.0.0.0 8021 ftpd -wv /storage/emulated/0/Tasker
 
-bash /storage/emulated/0/scripts/termux/github_update.sh 2&1 > /dev/null &
+bash /storage/emulated/0/scripts/termux/github_update.sh 2>/dev/null 1>/dev/null &
 date '+%F %T' >> /storage/emulated/0/scripts/backup/start.log
