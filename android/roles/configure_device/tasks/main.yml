@@ -1,45 +1,76 @@
+- name: Add repo "root-repo"
+  tags:
+    - install
+    - repo
+  community.general.pkg5:
+    name:
+      - root-repo
+    state: latest
+  when:
+    - not ansible_check_mode
+
 - name: Upgrade all packages
   tags: install
   ansible.builtin.command: pkg upgrade -y
   register: upgrade_status
-  changed_when: upgrade_status.rc != 0
+  changed_when: upgrade_status.rc == 0
 
 - name: Upgrade all packages again
   tags: install
   ansible.builtin.command: pkg upgrade -y
   register: upgrade_status
-  changed_when: upgrade_status.rc != 0
+  changed_when: upgrade_status.rc == 0
 
-- name: Install packages
+- name: Install packages (1 pack)
   tags: install
-  community.general.pkg5:
-    name:
-      - bmon
-      - busybox
-      - curl
-      - dnsutils
-      - file
-      - git
-      - iperf3
-      - iproute2
-      - lftp
-      - man
-      - mc
-      - nginx
-      - nmap
-      - openssl
-      - python
-      - rsync
-      - sshpass
-      - traceroute
-      - traceroute
-      - vim
-      - wget
-      - which
-    state: latest
-  when:
-    - not ansible_check_mode
-    - hostname == "m52.pro"
+  ansible.builtin.command: pkg install -y bmon busybox curl dnsutils file git iperf3 iproute2
+  register: upgrade_status
+  changed_when: upgrade_status.rc == 0
+
+- name: Install packages (2 pack)
+  tags: install
+  ansible.builtin.command: pkg install -y lftp man mc net-tools nginx nmap openssl python rsync sshpass traceroute vim wget which
+  register: upgrade_status
+  changed_when: upgrade_status.rc == 0
+
+# - name: Install packages
+#   tags: install
+#   community.general.pkg5:
+#     name:
+#       - bmon
+#       - busybox
+#       - curl
+#       - dnsutils
+#       - file
+#       - git
+#       - iperf3
+#       - iproute2
+#       - lftp
+#       - man
+#       - mc
+#       - nginx
+#       - nmap
+#       - openssl
+#       - python
+#       - rsync
+#       - sshpass
+#       - traceroute
+#       - vim
+#       - wget
+#       - which
+#     state: latest
+#   when:
+#     - not ansible_check_mode
+#     - hostname == "m52.pro"
+
+- name: Set password to user
+  tags:
+    - pass
+    - ssh
+    - sshd
+  ansible.builtin.shell: "echo '{{ PASSWD }}\n{{ PASSWD }}\n' | passwd"
+  register: passwd
+  changed_when: passwd.rc == 0
 
 - name: Git config email
   tags: git
@@ -134,10 +165,10 @@
     dest: "{{ item.path }}{{ item.name }}"
     mode: '0660'
   loop:
-    - { j2: bash.bashrc.j2, name: bash.bashrc, path: /storage/emulated/0/scripts/termux/ }
     - { j2: crontab.j2, name: crontab, path: /storage/emulated/0/scripts/termux/ }
     - { j2: backup_android_lftp_rsync.conf.j2, name: backup_android_lftp_rsync.conf, path: /storage/emulated/0/github/prod/ }
     - { j2: github_update.sh.j2, name: github_update.sh, path: /storage/emulated/0/scripts/termux/ }
+    - { j2: bash.bashrc.j2, name: bash.bashrc, path: /data/data/com.termux/files/usr/etc/ }
 
 - name: Create a symbolic link
   tags:
@@ -153,7 +184,6 @@
   loop:
     - { src: /storage/emulated/0/scripts/termux/start.sh, dest: /data/data/com.termux/files/usr/etc/profile.d/start.sh }
     - { src: /storage/emulated/0/github/prod/welcome.sh, dest: /data/data/com.termux/files/usr/etc/profile.d/welcome.sh }
-    - { src: /storage/emulated/0/scripts/termux/bash.bashrc, dest: /data/data/com.termux/files/usr/etc/bash.bashrc }
 
 - name: Create a symbolic link for 'a71.pro'
   tags: a71
@@ -182,4 +212,4 @@
     - crontab
   ansible.builtin.command: busybox crontab /storage/emulated/0/scripts/termux/crontab
   register: crontab_status
-  changed_when: crontab_status.rc != 0
+  changed_when: crontab_status.rc == 0

@@ -4,7 +4,7 @@ count_crond=$(pgrep -fc crond);
 count_sshd=$(pgrep -fc sshd);
 
 if [[ $count_crond -lt 1 ]]; then
-    #crond -L /storage/emulated/0/scripts/termux/crond.log;
+    # crond -L /storage/emulated/0/scripts/termux/crond.log;
     busybox crond;
     count_crond=$(pgrep -fc crond);
     echo "Started.... (count_crond=$count_crond)";
