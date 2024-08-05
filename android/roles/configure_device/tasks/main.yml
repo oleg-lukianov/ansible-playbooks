@@ -86,6 +86,13 @@
     scope: global
     value: "{{ GIT_NAME }}"
 
+- name: Git config http.postBuffer
+  tags: git2
+  community.general.git_config:
+    name: http.postBuffer
+    scope: global
+    value: 524288000
+
 - name: Git config safe.directory
   tags:
     - git

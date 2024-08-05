@@ -29,7 +29,7 @@ Check code
 
 ## Help commands
 Run from specific task  
-`ansible-playbook --vault-password-file ../.vault_pass -i inventory playbooks/configure_device/main.yml --limit m52 --start-at-task="Create a symbolic link for 'a71.pro'"`
+`ansible-playbook --vault-password-file ../.vault_pass -i inventory playbooks/configure_device/main.yml --limit m52_pro --start-at-task="Create a symbolic link for 'a71.pro'"`
 
 Encrypt/decrypt inventory  
 `cd android`  
