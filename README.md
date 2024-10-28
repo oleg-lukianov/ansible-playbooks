@@ -42,4 +42,7 @@ Encrypt/decrypt inventory
 `ansible-vault encrypt --vault-password-file ../.vault_pass roles/configure_backup_server/files/backup_scripts/backup_from_sftp_to_hdd.sh`  
 
 Create new password  
-`cat /dev/urandom | tr -dc 'A-Za-z0-9!=' | head -c 32`
+`cat /dev/urandom | tr -dc 'A-Za-z0-9!=' | head -c 32`  
+Create encrypt password  
+`echo 123 | base64`  
+pass=MTIzCg==  
