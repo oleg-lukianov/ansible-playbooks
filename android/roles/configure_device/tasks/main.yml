@@ -23,7 +23,7 @@
 
 - name: Install packages (1 pack)
   tags: install
-  ansible.builtin.command: pkg install -y bmon busybox curl dnsutils file git iperf3 iproute2
+  ansible.builtin.command: pkg install -y bmon busybox curl dnsutils file git inetutils iperf3 iproute2
   register: upgrade_status
   changed_when: upgrade_status.rc == 0
 
