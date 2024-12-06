@@ -3,7 +3,7 @@
 #  bash /storage/emulated/0/scripts/termux/run_for_new_phone.sh -install
 #  bash /storage/emulated/0/scripts/termux/run_for_new_phone.sh -restore
 #  sshd
-#  run ansible-playbook configure_device
+#  ansible-playbook --vault-password-file ../.vault_pass -i inventory playbooks/configure_device/main.yml --limit a71_pro
 
 #  bash /storage/emulated/0/scripts/termux/run_for_new_phone.sh -copy
 #  bash /storage/emulated/0/scripts/termux/run_for_new_phone.sh -restore
