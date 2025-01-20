@@ -1,7 +1,7 @@
 ---
 - name: Configure backup server
   hosts:
-   - duman_pro
+   - duman.pro
   gather_facts: true
   roles:
    - roles/configure_backup_server

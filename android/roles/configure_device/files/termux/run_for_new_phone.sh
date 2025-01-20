@@ -1,16 +1,25 @@
 #!/bin/bash
-#  termux-setup-storage
-#  bash /storage/emulated/0/scripts/termux/run_for_new_phone.sh -install
-#  bash /storage/emulated/0/scripts/termux/run_for_new_phone.sh -restore
-#  sshd
-#  ansible-playbook --vault-password-file ../.vault_pass -i inventory playbooks/configure_device/main.yml --limit a71_pro
 
-#  bash /storage/emulated/0/scripts/termux/run_for_new_phone.sh -copy
-#  bash /storage/emulated/0/scripts/termux/run_for_new_phone.sh -restore
+## Manual for first start ##
+# termux-setup-storage
+# pkg install openssh python -y
+# passwd
+# ssh-keygen -t rsa -b 2048 -f ~/.ssh/id_rsa
+# sshd
 
-#  HELP  #
+## Manual for reinstall ##
+# termux-setup-storage
+# bash /storage/emulated/0/scripts/termux/run_for_new_phone.sh -install
+# bash /storage/emulated/0/scripts/termux/run_for_new_phone.sh -restore
+# sshd
+# ansible-playbook --vault-password-file ../.vault_pass -i inventory playbooks/configure_device/main.yml --limit a71.pro
+
+# bash /storage/emulated/0/scripts/termux/run_for_new_phone.sh -copy
+# bash /storage/emulated/0/scripts/termux/run_for_new_phone.sh -restore
+
+##  HELP  ##
 #  Repolist
-#  cat  /data/data/com.termux/files/usr/etc/apt/sources.list
+#  cat /data/data/com.termux/files/usr/etc/apt/sources.list
 
 version="1.01 - 04.07.2024";
 

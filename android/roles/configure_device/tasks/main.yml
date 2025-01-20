@@ -87,7 +87,7 @@
     value: "{{ GIT_NAME }}"
 
 - name: Git config http.postBuffer
-  tags: git2
+  tags: git
   community.general.git_config:
     name: http.postBuffer
     scope: global
@@ -127,6 +127,12 @@
     - { dir: /storage/emulated/0/scripts/termux, perm: '0770' }
     - { dir: /data/data/com.termux/files/usr/var/spool/cron/crontabs, perm: '0700' }
 
+- name: Git clone "prod" (remove .lock file)
+  tags: git
+  ansible.builtin.file:
+    path: /storage/emulated/0/github/prod/*.lock
+    state: absent
+
 - name: Git clone "prod"
   tags: git
   ansible.builtin.git:
@@ -136,6 +142,12 @@
     force: true
     version: main
   ignore_errors: true
+
+- name: Git clone "private" (remove .lock file)
+  tags: git
+  ansible.builtin.file:
+    path: /storage/emulated/0/github/private/*.lock
+    state: absent
 
 - name: Git clone "private"
   tags: git

@@ -3,17 +3,17 @@ Repo for automation configure Android, MacOS, Linux
 
 ## Playbooks Android
 Ping hosts  
-`ansible-playbook --vault-password-file ../.vault_pass -i inventory playbooks/ping/main.yml --limit m52_pro`  
+`ansible-playbook --vault-password-file ../.vault_pass -i inventory playbooks/ping/main.yml --limit m52.pro`  
 
 Update device  
-`ansible-playbook --vault-password-file ../.vault_pass -i inventory playbooks/configure_device/main.yml --limit m52_pro --tag template`  
+`ansible-playbook --vault-password-file ../.vault_pass -i inventory playbooks/configure_device/main.yml --limit m52.pro --tag template`  
 
 ## Playbooks Linux
 Ping hosts  
-`ansible-playbook --vault-password-file ../.vault_pass -i inventory playbooks/ping/main.yml --limit duman_pro`  
+`ansible-playbook --vault-password-file ../.vault_pass -i inventory playbooks/ping/main.yml --limit duman.pro`  
 
 Configure backup server  
-`ansible-playbook --vault-password-file ../.vault_pass -i inventory playbooks/configure_backup_server/main.yml --limit duman_pro`  
+`ansible-playbook --vault-password-file ../.vault_pass -i inventory playbooks/configure_backup_server/main.yml --limit duman.pro`  
 
 ## ansible-lint
 Update ansible-lint from PIP  
@@ -29,7 +29,7 @@ Check code
 
 ## Help commands
 Run from specific task  
-`ansible-playbook --vault-password-file ../.vault_pass -i inventory playbooks/configure_device/main.yml --limit m52_pro --start-at-task="Create a symbolic link for 'a71.pro'"`
+`ansible-playbook --vault-password-file ../.vault_pass -i inventory playbooks/configure_device/main.yml --limit m52.pro --start-at-task="Create a symbolic link for 'a71.pro'"`
 
 Encrypt/decrypt inventory  
 `cd android`  

@@ -1,9 +1,11 @@
 ---
 - name: Configure device
   hosts:
-   - m52_pro
-   - a71_pro
-   - 9_pro
+   - m52.pro
+   - a71.pro
+   - a72.pro
+   - 9.pro
+   - geotex.pro
   gather_facts: true
   roles:
    - roles/configure_device
