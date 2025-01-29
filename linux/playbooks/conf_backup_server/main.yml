@@ -4,4 +4,4 @@
    - duman.pro
   gather_facts: true
   roles:
-   - roles/configure_backup_server
+   - roles/conf_backup_server

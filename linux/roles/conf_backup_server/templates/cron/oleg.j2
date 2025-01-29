@@ -1,0 +1,5 @@
+PATH=/home/oleg/.local/bin:/home/oleg/bin:/usr/share/Modules/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/var/lib/snapd/snap/bin
+
+@reboot sleep 120 && /opt/backup_scripts/backup_from_sftp_to_hdd.sh | tee -a /opt/backup_scripts/backup_from_sftp_to_hdd.log
+@reboot /usr/bin/iperf3 -Ds
+@reboot /storage/emulated/0/scripts/termux/github_update.sh

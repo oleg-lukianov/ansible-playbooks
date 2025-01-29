@@ -1,0 +1,10 @@
+#!/bin/bash
+
+echo "Update repo 'prod'"
+cd /opt/github/prod || exit;
+find . -name "*.lock" -delete;
+git checkout main;
+git reset --hard origin/HEAD;
+git pull origin main -f;
+
+exit 0;

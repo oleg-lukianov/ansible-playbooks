@@ -2,6 +2,7 @@
 - name: Configure device
   hosts:
    - erlan.pro
+   - duman.pro
   gather_facts: true
   roles:
-   - roles/configure_device
+   - roles/conf_new_server
