@@ -1,0 +1,31 @@
+- name: Copy scripts 'backup_scripts/'
+  tags:
+    - backup
+    - scripts
+  ansible.builtin.copy:
+    src: backup_scripts/
+    dest: /opt/backup_scripts/
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: '0755'
+
+- name: Copy scripts 'profile.d/'
+  tags:
+    - backup
+    - scripts
+  ansible.builtin.copy:
+    src: profile.d/
+    dest: /etc/profile.d/
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: '0755'
+
+- name: Copy files from template
+  tags:
+    - scripts
+  ansible.builtin.template:
+    src: "{{ item.path_in }}/{{ item.j2 }}"
+    dest: "{{ item.path_out }}{{ item.name }}"
+    mode: '0600'
+  loop:
+    - { j2: oleg.j2, name: oleg, path_in: cron, path_out: /var/spool/cron/ }

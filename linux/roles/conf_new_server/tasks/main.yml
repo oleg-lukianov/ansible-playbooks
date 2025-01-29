@@ -1,0 +1,100 @@
+- name: Copy aliases 'manual_aliases.sh'
+  tags: profile.d
+  ansible.builtin.template:
+    src: profile.d/manual_aliases.sh.j2
+    dest: /etc/profile.d/manual_aliases.sh
+    mode: '0755'
+
+- name: Set a hostname
+  tags: hostname
+  ansible.builtin.hostname:
+    name: "{{ hostname }}"
+  ignore_errors: true
+
+- name: Git config email
+  tags: git
+  community.general.git_config:
+    name: user.email
+    scope: global
+    value: "{{ GIT_EMAIL }}"
+
+- name: Git config name
+  tags: git
+  community.general.git_config:
+    name: user.name
+    scope: global
+    value: "{{ GIT_NAME }}"
+
+- name: Git config http.postBuffer
+  tags: git
+  community.general.git_config:
+    name: http.postBuffer
+    scope: global
+    value: 524288000
+
+- name: Git config safe.directory
+  tags:
+    - git
+    - safe
+  community.general.git_config:
+    name: safe.directory
+    scope: global
+    value: "{{ item.path }}"
+    add_mode: add
+  loop:
+    - { path: /opt/github/prod }
+
+- name: Create a directory if it does not exist
+  tags:
+    - git
+    - cron
+    - crontab
+  ansible.builtin.file:
+    path: "{{ item.dir }}"
+    force: true
+    state: directory
+    mode: "{{ item.perm }}"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+  loop:
+    - { dir: /opt/github, perm: '0755' }
+    - { dir: /opt/common, perm: '0755' }
+    - { dir: /opt/scripts, perm: '0755' }
+
+- name: Git clone "prod" (remove .lock file)
+  tags: git
+  ansible.builtin.file:
+    path: /opt/github/prod/*.lock
+    state: absent
+
+- name: Git clone "prod"
+  tags: git
+  ansible.builtin.git:
+    repo: https://github.com/oleg-lukianov/prod.git
+    dest: /opt/github/prod
+    update: true
+    force: true
+    version: main
+  ignore_errors: true
+
+- name: Copy files from template
+  tags:
+    - scripts
+  ansible.builtin.template:
+    src: "{{ item.path_in }}/{{ item.j2 }}"
+    dest: "{{ item.path_out }}{{ item.name }}"
+    mode: '0600'
+  loop:
+    - { j2: github_update.sh.j2, name: github_update.sh, path_in: common, path_out: /opt/common/ }
+
+- name: Create a symbolic link "welcome.sh"
+  tags:
+    - welcome
+  ansible.builtin.file:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    state: link
+  loop:
+    - { src: /opt/github/prod/welcome.sh, dest: /etc/profile.d/welcome.sh }
