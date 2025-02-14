@@ -1,11 +1,6 @@
 ---
 - name: Configure device
-  hosts:
-   - m52.pro
-   - a71.pro
-   - a72.pro
-   - 9.pro
-   - geotex.pro
+  hosts: all
   gather_facts: true
   roles:
    - roles/conf_new_server
