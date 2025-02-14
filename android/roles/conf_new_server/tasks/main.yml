@@ -157,8 +157,7 @@
     update: true
     force: true
     version: main
-  when:
-    - hostname == "m52.pro" or hostname == "a71.pro"
+  when: private_mode is true
   ignore_errors: true
 
 - name: Copy scripts 'termux/'
@@ -216,7 +215,7 @@
     state: link
   loop:
     - { src: /storage/emulated/0/scripts/welcome_aliases_list.sh, dest: /data/data/com.termux/files/usr/etc/profile.d/welcome_aliases_list.sh }
-  when: hostname == "a71.pro"
+  when: hostname == "a71.pro" or hostname == "fold6.pro"
 
 - name: Touch a file 'crontab'
   tags:
