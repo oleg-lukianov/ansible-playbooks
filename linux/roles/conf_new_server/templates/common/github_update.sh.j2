@@ -7,4 +7,12 @@ git checkout main;
 git reset --hard origin/HEAD;
 git pull origin main -f;
 
+echo "Update repo 'ansible-playbooks'"
+cd /opt/github/ansible-playbooks || exit;
+find . -name "*.lock" -delete;
+git checkout main;
+git reset --hard origin/HEAD;
+git pull origin main -f;
+ansible-vault decrypt --vault-password-file /root/ansible-playbooks/.vault_pass /opt/github/ansible-playbooks/linux/roles/conf_backup_server/files/backup_scripts/backup_from_sftp_to_hdd.sh
+
 exit 0;

@@ -1,3 +1,11 @@
+- name: Install the latest version
+  tags: install
+  ansible.builtin.dnf:
+    name: "{{ item.name }}"
+    state: latest
+  loop:
+    - { name: ansible}
+
 - name: Copy aliases 'manual_aliases.sh'
   tags: profile.d
   ansible.builtin.template:
@@ -17,6 +25,7 @@
     name: user.email
     scope: global
     value: "{{ GIT_EMAIL }}"
+  remote_user: oleg
 
 - name: Git config name
   tags: git
@@ -43,6 +52,7 @@
     add_mode: add
   loop:
     - { path: /opt/github/prod }
+    - { path: /opt/github/ansible-playbooks }
 
 - name: Create a directory if it does not exist
   tags:
@@ -61,20 +71,26 @@
     - { dir: /opt/common, perm: '0755' }
     - { dir: /opt/scripts, perm: '0755' }
 
-- name: Git clone "prod" (remove .lock file)
+- name: Git clone "{{ item.path }}" (remove .lock file)
   tags: git
   ansible.builtin.file:
-    path: /opt/github/prod/*.lock
+    path: "{{ item.path }}"
     state: absent
+  loop:
+    - { path: /opt/github/prod/*.lock }
+    - { path: /opt/github/ansible-playbooks/*.lock }
 
 - name: Git clone "prod"
   tags: git
   ansible.builtin.git:
-    repo: https://github.com/oleg-lukianov/prod.git
-    dest: /opt/github/prod
+    repo: "{{ item.repo }}"
+    dest: "{{ item.dest }}"
     update: true
     force: true
     version: main
+  loop:
+    - { repo: https://github.com/oleg-lukianov/prod.git, dest: /opt/github/prod }
+    - { repo: https://github.com/oleg-lukianov/ansible-playbooks.git, dest: /opt/github/ansible-playbooks }
   ignore_errors: true
 
 - name: Copy files from template
@@ -83,7 +99,7 @@
   ansible.builtin.template:
     src: "{{ item.path_in }}/{{ item.j2 }}"
     dest: "{{ item.path_out }}{{ item.name }}"
-    mode: '0600'
+    mode: '0755'
   loop:
     - { j2: github_update.sh.j2, name: github_update.sh, path_in: common, path_out: /opt/common/ }
 

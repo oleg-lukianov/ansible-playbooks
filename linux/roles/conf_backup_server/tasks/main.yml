@@ -1,4 +1,4 @@
-- name: Copy scripts 'backup_scripts/'
+- name: Copy scripts "backup_scripts/"
   tags:
     - backup
     - scripts
@@ -9,7 +9,7 @@
     group: "{{ ansible_user_id }}"
     mode: '0755'
 
-- name: Copy scripts 'profile.d/'
+- name: Copy scripts "profile.d/"
   tags:
     - backup
     - scripts
