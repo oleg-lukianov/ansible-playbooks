@@ -12,6 +12,9 @@ Update device
 Ping hosts  
 `ansible-playbook --vault-password-file ../.vault_pass -i inventory playbooks/ping/main.yml --limit duman.pro`  
 
+Update device  
+`ansible-playbook --vault-password-file ../.vault_pass -i inventory playbooks/conf_new_server/main.yml --limit duman.pro`  
+
 Configure backup server  
 `ansible-playbook --vault-password-file ../.vault_pass -i inventory playbooks/conf_backup_server/main.yml --limit duman.pro`  
 
