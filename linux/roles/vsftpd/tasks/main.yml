@@ -1,0 +1,24 @@
+- name: Install the latest version
+  tags: vsftpd
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: latest
+  loop:
+    - vsftpd
+
+- name: Copy config
+  tags: vsftpd
+  ansible.builtin.template:
+    src: vsftpd.conf.j2
+    dest: /etc/vsftpd/vsftpd.conf
+    owner: root
+    group: root
+    mode: '0666'
+
+- name: Restart service 'vsftpd.service', if running
+  tags: vsftpd
+  ansible.builtin.systemd:
+    name: vsftpd.service
+    state: restarted
+    enabled: true
+  ignore_errors: true

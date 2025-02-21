@@ -1,0 +1,31 @@
+- name: Install the latest version
+  tags: minidlna
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: latest
+  loop:
+    - minidlna
+
+- name: Copy config
+  tags: minidlna
+  ansible.builtin.template:
+    src: minidlna.conf.j2
+    dest: /etc/minidlna.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Modification the user 'minidlna'
+  tags: minidlna
+  ansible.builtin.user:
+    name: minidlna
+    comment: minidlna service account
+    groups: minidlna,oleg
+
+- name: Restart service 'minidlna.service', if running
+  tags: minidlna
+  ansible.builtin.systemd:
+    name: minidlna.service
+    state: restarted
+    enabled: true
+  ignore_errors: true
