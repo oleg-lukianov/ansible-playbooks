@@ -4,13 +4,15 @@
     name: "{{ item.name }}"
     state: latest
   loop:
-    - { name: ansible}
+    - { name: ansible }
 
 - name: Copy aliases 'manual_aliases.sh'
   tags: profile.d
   ansible.builtin.template:
     src: profile.d/manual_aliases.sh.j2
     dest: /etc/profile.d/manual_aliases.sh
+    owner: root
+    group: root
     mode: '0755'
 
 - name: Set a hostname
@@ -99,6 +101,8 @@
   ansible.builtin.template:
     src: "{{ item.path_in }}/{{ item.j2 }}"
     dest: "{{ item.path_out }}{{ item.name }}"
+    owner: oleg
+    group: oleg
     mode: '0755'
   loop:
     - { j2: github_update.sh.j2, name: github_update.sh, path_in: common, path_out: /opt/common/ }
