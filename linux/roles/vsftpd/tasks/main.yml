@@ -15,6 +15,20 @@
     group: root
     mode: '0666'
 
+- name: Modification the user "sftp"
+  tags: vsftpd
+  ansible.builtin.user:
+    shell: /bin/bash
+    name: "{{ sftp_user }}"
+    password: "{{ sftp_passwd | password_hash('sha512') }}"
+    comment: sftp user
+    groups: oleg
+    append: true
+    state: present
+    expires: -1
+    password_expire_min: -1
+    password_expire_max: -1
+
 - name: Restart service 'vsftpd.service', if running
   tags: vsftpd
   ansible.builtin.systemd:

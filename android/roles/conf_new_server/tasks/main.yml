@@ -160,6 +160,24 @@
   when: private_mode is true
   ignore_errors: true
 
+- name: Another way to call known_hosts
+  tags: git
+  ansible.builtin.known_hosts:
+    name: "{{ item.name }}"
+    key: "{{ item.key }}"
+    path: /data/data/com.termux/files/home/.ssh/known_hosts
+    state: present
+  loop: "{{ ssh_known_hosts }}"
+
+- name: Set authorized key taken from file
+  tags: git1
+  ansible.posix.authorized_key:
+    user: "{{ ansible_user_id }}"
+    state: present
+    path: /data/data/com.termux/files/home/.ssh/authorized_keys
+    key: "{{ item.key }}"
+  loop: "{{ authorized_keys }}"
+
 - name: Copy scripts 'termux/'
   tags:
     - start
@@ -206,7 +224,9 @@
     - { src: /storage/emulated/0/github/prod/welcome.sh, dest: /data/data/com.termux/files/usr/etc/profile.d/welcome.sh }
 
 - name: Create a symbolic link for 'a71.pro'
-  tags: a71
+  tags:
+    - a71
+    - fold6
   ansible.builtin.file:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
