@@ -20,7 +20,8 @@
   ansible.builtin.user:
     name: minidlna
     comment: minidlna service account
-    groups: minidlna,oleg
+    groups: oleg
+    append: true
 
 - name: Restart service 'minidlna.service', if running
   tags: minidlna
