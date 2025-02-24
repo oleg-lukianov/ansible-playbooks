@@ -25,22 +25,21 @@
   tags: git
   community.general.git_config:
     name: user.email
-    scope: global
-    value: "{{ GIT_EMAIL }}"
-  remote_user: oleg
+    scope: system
+    value: "{{ git_email }}"
 
 - name: Git config name
   tags: git
   community.general.git_config:
     name: user.name
-    scope: global
-    value: "{{ GIT_NAME }}"
+    scope: system
+    value: "{{ git_name }}"
 
 - name: Git config http.postBuffer
   tags: git
   community.general.git_config:
     name: http.postBuffer
-    scope: global
+    scope: system
     value: 524288000
 
 - name: Git config safe.directory
@@ -49,7 +48,7 @@
     - safe
   community.general.git_config:
     name: safe.directory
-    scope: global
+    scope: system
     value: "{{ item.path }}"
     add_mode: add
   loop:
@@ -66,8 +65,8 @@
     force: true
     state: directory
     mode: "{{ item.perm }}"
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_id }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
   loop:
     - { dir: /opt/github, perm: '0755' }
     - { dir: /opt/common, perm: '0755' }
@@ -101,8 +100,8 @@
   ansible.builtin.template:
     src: "{{ item.path_in }}/{{ item.j2 }}"
     dest: "{{ item.path_out }}{{ item.name }}"
-    owner: oleg
-    group: oleg
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     mode: '0755'
   loop:
     - { j2: github_update.sh.j2, name: github_update.sh, path_in: common, path_out: /opt/common/ }

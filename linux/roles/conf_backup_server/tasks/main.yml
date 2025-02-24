@@ -5,9 +5,20 @@
   ansible.builtin.copy:
     src: backup_scripts/
     dest: /opt/backup_scripts/
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_id }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     mode: '0755'
+
+- name: Change file ownership, group and permissions
+  tags:
+    - backup
+    - scripts
+  ansible.builtin.file:
+    path: /opt/backup_scripts
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+  ignore_errors: true
 
 - name: Copy scripts "profile.d/"
   tags:
