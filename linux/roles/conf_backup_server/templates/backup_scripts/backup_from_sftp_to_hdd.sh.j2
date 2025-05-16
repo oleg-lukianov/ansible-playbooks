@@ -1,0 +1,71 @@
+#!/bin/bash
+
+sudo mount -a;
+
+file_start=${0//sh/start};
+date '+%F %T' >> "$file_start";
+
+check_status() {
+    file_status=${0//sh/status};
+    status=$(cat "$file_status");
+    echo "Status = $status";
+}
+
+check_status;
+if [[ "$status" =~ "START" ]]; then
+    if [ -f {{ RAID_PATH_OUT }}/backup.txt ]; then
+        backup_dirs=(
+{{ BACKUP_DIRS }}
+        );
+
+        for x in "${backup_dirs[@]}"; do
+            check_status;
+            if [[ "$status" =~ "START" ]]; then
+                echo "Get dir = '$x' ($(date '+%F %T'))";
+                lftp -e "set ftp:ssl-allow no; mirror --verbose -P 20 --continue --delete '$x' '{{ RAID_PATH_OUT }}/'; exit;" -p 22 -u {{ SFTP_USER }},"{{ SFTP_PASS}}" sftp://{{ SFTP_HOST }};
+            else
+                echo "STOP script";
+                exit 1;
+            fi;
+        done;
+
+
+    ## get folder size
+    echo "Get folder size";
+    cd "{{ RAID_PATH_OUT }}/" || exit;
+    du -sb * > "{{ RAID_PATH_OUT }}/TEMP/folder_sizes.txt";
+    /opt/backup_scripts/folder_sizes.sh;
+
+    ## arch DCIM
+    # echo "arch DCIM";
+    # /opt/backup_scripts/sync_and_arch_DCIM.sh
+
+    ## power off
+    check_status;
+    if [[ "$status" =~ "START" ]]; then
+        echo "Power off sleep 600 sec";
+        sleep 600;
+        /usr/bin/sudo /usr/bin/systemctl poweroff;
+    else
+        echo "STOP script";
+        exit 1;
+    fi;
+
+    else
+        echo "File not exist {{ RAID_PATH_OUT }}/backup.txt";
+        check_status;
+        if [[ "$status" =~ "START" ]]; then
+            echo 'Power off sleep 600 sec";
+            sleep 600;
+            /usr/bin/sudo /usr/bin/systemctl poweroff;
+        else
+            echo "STOP script";
+            exit 1;
+        fi;
+    fi;
+
+else
+    echo "STOP script";
+fi;
+
+exit 0;

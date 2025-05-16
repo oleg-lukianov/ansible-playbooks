@@ -1,0 +1,10 @@
+---
+- name: Configure device
+  hosts:
+   - erlan.pro
+  gather_facts: true
+  roles:
+   - roles/conf_new_server_erlan
+   - roles/zabbix_server
+   - roles/minidlna
+   - roles/vsftpd

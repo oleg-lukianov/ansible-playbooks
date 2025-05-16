@@ -1,25 +1,3 @@
-- name: Copy scripts "backup_scripts/"
-  tags:
-    - backup
-    - scripts
-  ansible.builtin.copy:
-    src: backup_scripts/
-    dest: /opt/backup_scripts/
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: '0755'
-
-- name: Change file ownership, group and permissions
-  tags:
-    - backup
-    - scripts
-  ansible.builtin.file:
-    path: /opt/backup_scripts
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: '0755'
-  ignore_errors: true
-
 - name: Copy scripts "profile.d/"
   tags:
     - backup
@@ -37,6 +15,19 @@
   ansible.builtin.template:
     src: "{{ item.path_in }}/{{ item.j2 }}"
     dest: "{{ item.path_out }}{{ item.name }}"
-    mode: '0600'
+    mode: "{{ item.mode }}"
   loop:
-    - { j2: oleg.j2, name: oleg, path_in: cron, path_out: /var/spool/cron/ }
+    - { j2: oleg.j2, name: oleg, path_in: cron, path_out: /var/spool/cron/, mode: '0600' }
+    - { j2: backup_from_sftp_to_hdd.sh.j2, name: backup_from_sftp_to_hdd.sh, path_in: backup_scripts, path_out: /opt/backup_scripts/, mode: '0755' }
+    - { j2: folder_sizes.sh.j2, name: folder_sizes.sh, path_in: backup_scripts, path_out: /opt/backup_scripts/, mode: '0755' }
+    - { j2: sync_and_arch_DCIM.sh.j2, name: sync_and_arch_DCIM.sh, path_in: backup_scripts, path_out: /opt/backup_scripts/, mode: '0755' }
+
+- name: Change file ownership, group and permissions
+  tags:
+    - backup
+    - scripts
+  ansible.builtin.file:
+    path: /opt/backup_scripts
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'

@@ -1,0 +1,57 @@
+# - name: Add repository
+#   tags: zabbix
+#   ansible.builtin.yum_repository:
+#     name: zabbix-release
+#     description: Zabbix Official Repository (release packages) - noarch
+#     baseurl: https://repo.zabbix.com/zabbix/7.2/release/alma/9/noarch/zabbix-release-latest-7.2.el9.noarch.rpm
+
+- name: Install the latest version
+  tags: install
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: latest
+  loop:
+    - zabbix-server-mysql
+    - zabbix-web-mysql
+    - zabbix-apache-conf
+    - zabbix-sql-scripts
+    - zabbix-selinux-policy
+    - zabbix-agent
+    - mariadb
+    - mariadb-backup
+    - mariadb-common
+    - mariadb-connector-c
+    - mariadb-connector-c-config
+    - mariadb-errmsg
+    - mariadb-gssapi-server
+    - mariadb-server
+    - mariadb-server-utils
+    - perl-DBD-MariaDB
+
+- name: Enable service 'mariadb.service'
+  tags: mariadb
+  ansible.builtin.systemd:
+    name: mariadb
+    enabled: true
+    masked: false
+
+- name: Create a new database
+  tags: mariadb
+  community.mysql.mysql_db:
+    name: "{{ DB_NAME }}"
+    state: present
+
+- name: Create database user
+  tags: mariadb
+  community.mysql.mysql_user:
+    name: "{{ USER }}"
+    password: "{{ PASSWD }}"
+    priv: "{{ USER }}.*:ALL"
+    state: present
+
+- name: Set global variable for 'zabbix2' DB
+  community.mysql.mysql_variables:
+    tags: mariadb
+    variable: log_bin_trust_function_creators
+    value: 1
+    mode: persist

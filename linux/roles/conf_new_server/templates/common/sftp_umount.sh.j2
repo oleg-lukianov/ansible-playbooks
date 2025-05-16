@@ -1,0 +1,5 @@
+#!/bin/bash
+
+kill -9 "$(lsof | grep HDD_2TB | awk '{print $2}' | tr '\n' ' ')";
+
+fusermount -u {{ SFTP_PATH_OUT }}
