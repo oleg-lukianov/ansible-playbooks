@@ -1,0 +1,14 @@
+[Unit]
+Description=SSHFS
+After=NetworkManager.service
+
+[Service]
+Type=forking
+Restart=on-failure
+ExecStart=/opt/common/sftp_mount.sh
+ExecStop=/opt/common/sftp_umount.sh
+RestartSec=20s
+SyslogIdentifier=sshfs
+
+[Install]
+WantedBy=multi-user.target

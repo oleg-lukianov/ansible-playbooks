@@ -1,0 +1,10 @@
+[Unit]
+Description=A server for streaming Motion-JPEG from a video capture device
+After=network.target
+
+[Service]
+User=oleg
+ExecStart=/opt/github/mjpg-streamer/mjpg-streamer-experimental/mjpg_streamer -i "/opt/github/mjpg-streamer/mjpg-streamer-experimental/input_uvc.so" -o "/opt/github/mjpg-streamer/mjpg-streamer-experimental/output_http.so -w /opt/github/mjpg-streamer/mjpg-streamer-experimental/www -p 8081"
+
+[Install]
+WantedBy=multi-user.target

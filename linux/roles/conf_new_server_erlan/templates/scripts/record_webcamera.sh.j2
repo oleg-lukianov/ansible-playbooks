@@ -1,0 +1,39 @@
+#!/bin/bash
+#
+#  bash /storage/emulated/0/scripts/record_webcamera.sh
+#
+#########  Config  ###########################
+
+catalog="{{ SFTP_PATH_OUT }}/record_webcamera";
+
+#########  Delete old files  #####################
+
+echo "~~~~ Start - Delete old files ~~~~";
+
+find "$catalog/*" -type f -mtime +2 -delete;
+
+echo "~~~~ End --- Delete old files ~~~~";
+echo "";
+
+#########  Record new files  ####################
+
+echo "~~~~ Start - Record new files ~~~~";
+file_status=${0/sh/status};
+
+status=$(cat "$file_status");
+echo "Status = $status";
+
+if [[ "$status" =~ "PROBLEM" ]]; then
+        echo "Recording......";
+        echo "cd to $catalog"
+        cd "$catalog" || exit;
+        echo "Write ffmpeg stream"
+		ffmpeg -loglevel quiet -t 60 -n -i "http://127.0.0.1:8081/?action=stream" "$(date +%Y-%m-%d__%H-%M-%S)__webcamera.mp4" &
+        echo "Catch snapshot"
+		curl -o "$(date +%Y-%m-%d__%H-%M-%S)__snapshot.jpeg" "http://127.0.0.1:8081/?action=snapshot" 2> /dev/null &
+else
+    echo "No recording......";
+fi
+echo "~~~~ End --- Record new files ~~~~";
+
+exit 0;
