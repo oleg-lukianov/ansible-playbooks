@@ -9,6 +9,44 @@
     - python3-pip.noarch
     - sysstat.x86_64
 
+- name: Install a modularity appstream with defined stream
+  tags:
+    - postgresql
+    - pgsql
+  ansible.builtin.dnf:
+    name: '@postgresql:16'
+    state: present
+
+- name: Install the latest version
+  tags:
+    - postgresql
+    - pgsql
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: latest
+  loop:
+    - postgresql-server.x86_64
+
+- name: Enable service 'postgresql.service' and ensure it is not masked
+  tags:
+    - postgresql
+    - pgsql
+  ansible.builtin.systemd:
+    name: postgresql
+    enabled: true
+    state: started
+    masked: false
+
+- name: Copy files in sudoers.d
+  tags:
+    - users
+    - postgresql
+    - pgsql
+  ansible.builtin.template:
+    src: sudoers.d/sudo.j2
+    dest: "/etc/sudoers.d/{{ ansible_user }}"
+    mode: '0644'
+
 - name: Copy aliases 'manual_aliases.sh'
   tags: profile.d
   ansible.builtin.template:

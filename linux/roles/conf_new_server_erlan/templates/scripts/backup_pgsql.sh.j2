@@ -1,0 +1,56 @@
+#!/usr/bin/bash
+
+databases=(
+{{ PGSQL_DB_BACKUP }}
+);
+
+title="Backup-PgSQL";
+path_out="{{ SFTP_PATH_OUT }}/Backup-{{ hostname }}";
+
+echo -e "\e[0;93m~~~~ CONFIG ~~~~\e[0m";
+echo -e "\e[0;93mSFTP_PATH_OUT=$SFTP_PATH_OUT\e[0m";
+echo -e "\e[0;93mpath_out=$path_out\e[0m";
+
+if [[ "$path_out" == "" ]] || [[ ! -d "$path_out" ]]; then
+    echo -e "\e[0;93mNo path SFTP_PATH_OUT !!!\e[0m"
+    exit 1;
+fi
+
+if [[ -d "$path_out/$title" ]]; then
+    echo -e "\e[0;93mDir $path_out/$title exist\e[0m";
+else
+    echo -e "\e[0;93mDir $path_out/$title NOT exist\e[0m";
+	mkdir "$path_out/$title";
+fi
+
+echo -e "\e[0;93m~~~~~~~~~~~~~~\e[0m";
+echo "";
+
+echo -e "\e[0;91m~~~~ Start DUMP $title (Time $(date +%T)) ~~~~\e[0m";
+echo "";
+
+for x in "${databases[@]}"; do
+
+    echo -e "\e[0;91m~~~~ Start DUMP $x (Time $(date +%T)) ~~~~\e[0m";
+    sudo su - postgres <<EOF
+        pg_dump --verbose $x -h localhost | gzip > "$path_out/$title/dump_pgsql_${x}_$(date +%F).sql.gz";
+EOF
+done;
+
+# CREATE DUMP
+#   PG_PASSWORD=12345678 pg_dump --verbose -U test_java $x -h localhost | gzip > $path_out/$title/dump_pgsql_${x}_`date +%F`.sql.gz;
+
+# RESTORE
+#	gunzip -c dump_pgsql_test_db_2020-04-23.sql.gz | psql -U test_java test_db
+
+sudo su - postgres <<EOF
+    pg_dumpall > "$path_out/$title/pg_dumpall.out";
+EOF
+
+find "$path_out/$title/"* -name "dump_pgsql_*" -mtime +30 -exec rm -rf {} \;
+
+echo "";
+echo -e "\e[0;91m~~~~ Stop DUMP $title (Time $(date +%T)) ~~~~\e[0m";
+
+
+exit 0;

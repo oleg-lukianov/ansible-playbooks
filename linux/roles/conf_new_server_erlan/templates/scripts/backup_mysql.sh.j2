@@ -1,0 +1,60 @@
+#!/usr/bin/bash
+
+databases=(
+{{ MYSQL_DB_BACKUP }}
+);
+
+title="Backup-MySQL";
+path_out="{{ SFTP_PATH_OUT }}/Backup-{{ hostname }}";
+
+echo -e "\e[0;93m~~~~ CONFIG ~~~~\e[0m";
+echo -e "\e[0;93mSFTP_PATH_OUT={{ SFTP_PATH_OUT }}\e[0m";
+echo -e "\e[0;93mpath_out=$path_out\e[0m";
+
+if [[ "$path_out" == "" ]] || [[ ! -d "$path_out" ]]; then
+    echo -e "\e[0;93mNo path SFTP_PATH_OUT !!!\e[0m"
+    exit 1;
+fi
+
+if [[ -d "$path_out/$title" ]]; then
+    echo -e "\e[0;93mDir $path_out/$title exist\e[0m";
+else
+    echo -e "\e[0;93mDir $path_out/$title NOT exist\e[0m";
+	mkdir "$path_out/$title";
+fi
+
+echo -e "\e[0;93m~~~~~~~~~~~~~~\e[0m";
+echo "";
+
+echo -e "\e[0;91m~~~~ Start DUMP $title (Time $(date +%T)) ~~~~\e[0m";
+echo "";
+
+
+for x in "${databases[@]}"; do
+
+    echo -e "\e[0;91m~~~~ Start DUMP $x (Time $(date +%T)) ~~~~\e[0m";
+	mysqldump -v -u root "$x" | gzip > "$path_out/$title/dump_mysql_${x}_$(date +%F).sql.gz";
+
+# RESTORE DB
+# gunzip -c dump_mysql_MODX_2020-07-05.sql.gz | mysql -u modx_user -ppass MODX
+#
+# ANOTHER WAY
+#
+# gunzip dump_mysql_zabbix_2025-04-09.sql.gz
+# mysql -u root -proot -h localhost
+# create database zabbix;
+# use zabbix;
+# source dump_mysql_zabbix_2025-04-09.sql;
+# select FROM_UNIXTIME(max(clock)) from history limit 1;
+
+done;
+
+mysqldump -v -u root --all-databases > "$path_out/$title/all_databases.sql"
+
+find "$path_out/$title/"* -name "dump_mysql_*" -mtime +30 -exec rm -rf {} \;
+
+echo "";
+echo -e "\e[0;91m~~~~ Stop DUMP $title (Time $(date +%T)) ~~~~\e[0m";
+
+
+exit 0;
