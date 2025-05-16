@@ -1,0 +1,18 @@
+PATH=/home/oleg/.local/bin:/home/oleg/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin
+SHELL=/bin/bash
+BASH_ENV=/etc/bashrc
+MAILTO=oleg
+
+# Zabbix
+* * * * * /etc/zabbix/update_macros_in_ZABBIX_DB.pl -h {{ ZABBIX_HOST }} -P {{ ZABBIX_PORT }} -u {{ ZABBIX_USER }} -p {{ ZABBIX_PASS }} -d {{ ZABBIX_DB }} 2>/dev/null 1>/dev/null
+
+# Github
+0 3 * * * /opt/common/github_update.sh
+
+# Monitoring
+@reboot /usr/bin/iperf3 -Ds
+
+# Processes
+* * * * * /home/ALL/scripts/record_webcamera.sh 1>/dev/null
+*/2 * * * * status=`sudo systemctl is-active sftp_mount`; if [ "$status" = "inactive" -o "$status" = "failed" ]; then echo start; sudo systemctl start sftp_mount; fi
+

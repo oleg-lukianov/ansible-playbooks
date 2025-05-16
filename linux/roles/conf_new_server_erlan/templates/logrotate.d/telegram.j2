@@ -1,0 +1,10 @@
+/var/log/telegram/telegram.log {
+    daily
+    compress
+    delaycompress
+    notifempty
+    missingok
+    rotate 15
+    dateext
+    create 0666 {{ ansible_user }} {{ ansible_user }}
+}

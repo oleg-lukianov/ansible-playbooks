@@ -1,0 +1,12 @@
+#!/usr/bin/bash
+
+ARRAY=($(cat {{ RAID_PATH_OUT }}/TEMP/folder_sizes.txt | tr '\t' ';' | tr '$' '\n'));
+
+for x in "${ARRAY[@]}"; do
+    TEMP=(${x//;/ })
+    echo "size = ${TEMP[0]} --- folder = ${TEMP[1]}"
+    zabbix_sender -z {{ ZABBIX_HOST }} -s {{ hostname }} -k "folder_sizes_[${TEMP[1]}]" -o "${TEMP[0]}";
+
+done;
+
+exit 0;

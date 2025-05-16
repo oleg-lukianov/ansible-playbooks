@@ -1,0 +1,4 @@
+- name: Obtain information about a file
+  ansible.windows.win_stat:
+    path: C:\Fraps\changes.txt
+  register: file_info

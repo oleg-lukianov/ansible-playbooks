@@ -1,25 +1,36 @@
 - name: Install the latest version
   tags: install
   ansible.builtin.dnf:
-    name: "{{ item.name }}"
+    name: "{{ item }}"
     state: latest
   loop:
-    - { name: ansible }
+    - ansible-core.x86_64
+    - iperf3.x86_64
+    - python3-pip.noarch
+    - sysstat.x86_64
 
 - name: Copy aliases 'manual_aliases.sh'
   tags: profile.d
   ansible.builtin.template:
     src: profile.d/manual_aliases.sh.j2
     dest: /etc/profile.d/manual_aliases.sh
-    owner: root
-    group: root
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     mode: '0755'
 
 - name: Set a hostname
   tags: hostname
   ansible.builtin.hostname:
     name: "{{ hostname }}"
-  ignore_errors: true
+
+- name: Recursively change ownership of a directory /opt
+  tags: perm
+  ansible.builtin.file:
+    path: /opt
+    state: directory
+    mode: '0777'
+    owner: root
+    group: root
 
 - name: Git config email
   tags: git
@@ -54,6 +65,7 @@
   loop:
     - { path: /opt/github/prod }
     - { path: /opt/github/ansible-playbooks }
+    - { path: /opt/github/python }
 
 - name: Create a directory if it does not exist
   tags:
@@ -71,8 +83,9 @@
     - { dir: /opt/github, perm: '0755' }
     - { dir: /opt/common, perm: '0755' }
     - { dir: /opt/scripts, perm: '0755' }
+    - { dir: "{{ SFTP_PATH_OUT }}", perm: '0777' }
 
-- name: Git clone "{{ item.path }}" (remove .lock file)
+- name: Git clone repo (remove .lock file)
   tags: git
   ansible.builtin.file:
     path: "{{ item.path }}"
@@ -80,9 +93,11 @@
   loop:
     - { path: /opt/github/prod/*.lock }
     - { path: /opt/github/ansible-playbooks/*.lock }
+    - { path: /opt/github/python/*.lock }
 
-- name: Git clone "prod"
+- name: Git clone repo
   tags: git
+  become: false
   ansible.builtin.git:
     repo: "{{ item.repo }}"
     dest: "{{ item.dest }}"
@@ -92,7 +107,17 @@
   loop:
     - { repo: https://github.com/oleg-lukianov/prod.git, dest: /opt/github/prod }
     - { repo: https://github.com/oleg-lukianov/ansible-playbooks.git, dest: /opt/github/ansible-playbooks }
+    - { repo: https://github.com/oleg-lukianov/python.git, dest: /opt/github/python }
   ignore_errors: true
+
+- name: Recursively change ownership of a directory /opt/github
+  tags: git
+  ansible.builtin.file:
+    path: /opt/github
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    recurse: true
 
 - name: Copy files from template
   tags:
@@ -105,6 +130,8 @@
     mode: '0755'
   loop:
     - { j2: github_update.sh.j2, name: github_update.sh, path_in: common, path_out: /opt/common/ }
+    - { j2: sftp_mount.sh.j2, name: sftp_mount.sh, path_in: common, path_out: /opt/common/ }
+    - { j2: sftp_umount.sh.j2, name: sftp_umount.sh, path_in: common, path_out: /opt/common/ }
 
 - name: Create a symbolic link "welcome.sh"
   tags:
@@ -117,3 +144,93 @@
     state: link
   loop:
     - { src: /opt/github/prod/welcome.sh, dest: /etc/profile.d/welcome.sh }
+
+- name: Change parameters in file "/etc/systemd/logind.conf"
+  tags: logind
+  ansible.builtin.lineinfile:
+    path: /etc/systemd/logind.conf
+    regexp: '.*HandleLidSwitch=.*'
+    line: 'HandleLidSwitch=ignore'
+
+- name: Restart service "systemd-logind.service", if running
+  tags: logind
+  ansible.builtin.systemd:
+    name: systemd-logind.service
+    state: restarted
+
+- name: Disable selinux
+  tags: selinux
+  ansible.builtin.lineinfile:
+    path: /etc/selinux/config
+    regexp: 'SELINUX=.*'
+    line: 'SELINUX=disable'
+
+- name: Gnome disable-lock-screen
+  tags: dconf
+  community.general.dconf:
+    key: "/org/gnome/desktop/lockdown/disable-lock-screen"
+    value: "true"
+    state: present
+
+- name: Update "systemd/journald.conf"
+  tags:
+    - journal
+    - journald
+    - journalctl
+  ansible.builtin.copy:
+    src: systemd/journald.conf
+    dest: /etc/systemd/journald.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Reload "systemd-journald"
+  tags:
+    - journal
+    - journald
+    - journalctl
+  ansible.builtin.systemd:
+    name: systemd-journald
+    state: restarted
+
+- name: Create a directory if it does not exist
+  tags: vault
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    force: true
+    state: directory
+    mode: '0600'
+    owner: root
+    group: root
+  loop: "{{ VAULT_USER }}"
+
+- name: Copy vault files
+  tags: vault
+  ansible.builtin.copy:
+    dest: "{{ item.path }}/{{ item.file }}"
+    content: "{{ item.pass }}"
+    mode: '0600'
+  loop: "{{ VAULT_USER }}"
+
+- name: Copy service 'sftp_mount.service'
+  tags: systemd
+  ansible.builtin.copy:
+    src: systemd/system/sftp_mount.service
+    dest: /etc/systemd/system/sftp_mount.service
+    owner: root
+    group: root
+    mode: '0640'
+
+- name: Just force systemd to reread configs (2.4 and above)
+  tags: systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Enable service 'sftp_mount.service' and ensure it is not masked
+  tags:
+    - systemd
+  ansible.builtin.systemd:
+    name: sftp_mount
+    enabled: true
+    state: started
+    masked: false

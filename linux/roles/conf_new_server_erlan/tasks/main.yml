@@ -1,0 +1,162 @@
+- name: Create a directory if it does not exist
+  tags:
+    - scripts
+    - cron
+    - crontab
+    - telegram
+  ansible.builtin.file:
+    path: "{{ item.dir }}"
+    force: true
+    state: directory
+    mode: "{{ item.perm }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+  loop:
+    - { dir: /var/log/telegram, perm: '0755' }
+
+- name: Touch a file, using symbolic modes to set the permissions (equivalent to 0644)
+  tags: telegram
+  ansible.builtin.file:
+    path: /var/log/telegram/telegram.log
+    state: touch
+    mode: u=rw,g=r,o=r
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Copy files from template
+  tags:
+    - scripts
+    - cron1
+    - crontab
+    - telegram
+  ansible.builtin.template:
+    src: "{{ item.path_in }}/{{ item.j2 }}"
+    dest: "{{ item.path_out }}{{ item.name }}"
+    mode: "{{ item.mode }}"
+  loop:
+    - { j2: oleg.j2, name: oleg, path_in: cron, path_out: /var/spool/cron/, mode: '0600' }
+    - { j2: send_to_telegram.sh.j2, name: send_to_telegram.sh, path_in: common, path_out: /opt/common/, mode: '0755' }
+    - { j2: telegram.j2, name: telegram, path_in: logrotate.d, path_out: /etc/logrotate.d/, mode: '0644' }
+    - { j2: record_webcamera.sh.j2, name: record_webcamera.sh, path_in: scripts, path_out: /opt/scripts/, mode: '0755' }
+
+- name: Create a symbolic link
+  tags: systemd
+  ansible.builtin.file:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    state: link
+  loop:
+    - { src: /opt/github/python/album/album.service, dest: /etc/systemd/system/album.service }
+
+- name: Just force systemd to reread configs (2.4 and above)
+  tags: systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Enable service 'album.service' and ensure it is not masked
+  tags:
+    - systemd
+    - album
+  ansible.builtin.systemd:
+    name: album
+    enabled: true
+    state: started
+    masked: false
+
+- name: Install flask python package
+  tags: album
+  ansible.builtin.pip:
+    name: flask
+
+- name: Install the latest version
+  tags:
+    - mjpg-streamer
+    - camera1
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: latest
+  loop:
+    - cmake.x86_64
+    - libjpeg-turbo-devel.x86_64
+    - ffmpeg.x86_64
+
+- name: Git config safe.directory
+  tags:
+    - mjpg-streamer
+    - camera
+  community.general.git_config:
+    name: safe.directory
+    scope: system
+    value: "{{ item.path }}"
+    add_mode: add
+  loop:
+    - { path: /opt/github/mjpg-streamer }
+
+- name: Git clone repo "mjpg-streamer"
+  tags:
+    - mjpg-streamer
+    - camera
+  become: false
+  ansible.builtin.git:
+    repo: "{{ item.repo }}"
+    dest: "{{ item.dest }}"
+    update: true
+    force: true
+    version: master
+  loop:
+    - { repo: https://github.com/jacksonliam/mjpg-streamer.git, dest: /opt/github/mjpg-streamer }
+  ignore_errors: true
+
+- name: Recursively change ownership of a directory /opt/github
+  tags:
+    - mjpg-streamer
+    - camera
+  ansible.builtin.file:
+    path: /opt/github
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    recurse: true
+
+- name: Copy service "mjpg_streamer"
+  tags:
+    - mjpg-streamer
+    - camera
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: '0644'
+  loop:
+    - { src: systemd/system/mjpg_streamer.service, dest: /etc/systemd/system/mjpg_streamer.service }
+
+- name: Just force systemd to reread configs (2.4 and above)
+  tags:
+    - mjpg-streamer
+    - camera
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Enable service 'mjpg_streamer.service' and ensure it is not masked
+  tags:
+    - mjpg-streamer
+    - camera
+  ansible.builtin.systemd:
+    name: mjpg_streamer
+    enabled: true
+    state: started
+    masked: false
+
+- name: Touch a file, using symbolic modes to set the permissions (equivalent to 0644)
+  tags:
+    - mjpg-streamer
+    - camera
+  ansible.builtin.file:
+    path: /opt/scripts/record_webcamera.status
+    state: touch
+    mode: u=rw,g=rw,o=rw
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
