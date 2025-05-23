@@ -4,7 +4,7 @@
     name: "{{ item }}"
     state: latest
   loop:
-    - ansible-core.x86_64
+    - ansible-core
     - iperf3.x86_64
     - python3-pip.noarch
     - sysstat.x86_64

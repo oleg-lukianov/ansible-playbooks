@@ -1,11 +1,10 @@
 ---
 - name: Configure device
   hosts:
-   - erlan.pro
+   - duman.pro
   gather_facts: true
   roles:
    - roles/conf_new_server
-   - roles/conf_new_server_erlan
-  #  - roles/zabbix_server
+   - roles/conf_backup_server
    - roles/minidlna
    - roles/vsftpd

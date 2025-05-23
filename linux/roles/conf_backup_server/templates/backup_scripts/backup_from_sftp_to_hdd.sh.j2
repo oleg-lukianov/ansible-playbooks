@@ -55,7 +55,7 @@ if [[ "$status" =~ "START" ]]; then
         echo "File not exist {{ RAID_PATH_OUT }}/backup.txt";
         check_status;
         if [[ "$status" =~ "START" ]]; then
-            echo 'Power off sleep 600 sec";
+            echo "Power off sleep 600 sec";
             sleep 600;
             /usr/bin/sudo /usr/bin/systemctl poweroff;
         else

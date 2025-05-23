@@ -1,4 +1,23 @@
 - name: Create a directory if it does not exist
+  tags: vault
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    force: true
+    state: directory
+    mode: '0600'
+    owner: root
+    group: root
+  loop: "{{ VAULT_USER }}"
+
+- name: Copy vault files
+  tags: vault
+  ansible.builtin.copy:
+    dest: "{{ item.path }}/{{ item.file }}"
+    content: "{{ item.pass }}"
+    mode: '0600'
+  loop: "{{ VAULT_USER }}"
+
+- name: Create a directory if it does not exist
   tags:
     - scripts
     - cron
@@ -26,7 +45,7 @@
 - name: Copy files from template
   tags:
     - scripts
-    - cron1
+    - cron
     - crontab
     - telegram
   ansible.builtin.template:
