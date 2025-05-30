@@ -22,7 +22,7 @@ if [[ "$status" =~ "START" ]]; then
             check_status;
             if [[ "$status" =~ "START" ]]; then
                 echo "Get dir = '$x' ($(date '+%F %T'))";
-                lftp -e "set ftp:ssl-allow no; mirror --verbose -P 20 --continue --delete '$x' '{{ RAID_PATH_OUT }}/'; exit;" -p 22 -u {{ SFTP_USER }},"{{ SFTP_PASS}}" sftp://{{ SFTP_HOST }};
+                lftp -e "set ftp:ssl-allow no; set net:timeout 5; set net:max-retries 3; set net:reconnect-interval-multiplier 1; set net:reconnect-interval-base 5; mirror --verbose -P 20 --continue --delete '$x' '{{ RAID_PATH_OUT }}/'; exit;" -p 22 -u {{ SFTP_USER }},"{{ SFTP_PASS }}" sftp://{{ SFTP_HOST }};
             else
                 echo "STOP script";
                 exit 1;
