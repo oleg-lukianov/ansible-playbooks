@@ -17,6 +17,7 @@
   ansible.builtin.dnf:
     name: '@postgresql:16'
     state: present
+  ignore_errors: true
 
 - name: Install the latest version
   tags:
@@ -27,6 +28,7 @@
     state: latest
   loop:
     - postgresql-server.x86_64
+  ignore_errors: true
 
 - name: Enable service 'postgresql.service' and ensure it is not masked
   tags:
@@ -37,6 +39,7 @@
     enabled: true
     state: started
     masked: false
+  ignore_errors: true
 
 - name: Copy files in sudoers.d
   tags:
@@ -239,8 +242,8 @@
     force: true
     state: directory
     mode: '0600'
-    owner: root
-    group: root
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
   loop: "{{ VAULT_USER }}"
 
 - name: Copy vault files
@@ -273,3 +276,4 @@
     enabled: true
     state: started
     masked: false
+  ignore_errors: true

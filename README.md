@@ -3,23 +3,17 @@ Repo for automation configure Android, MacOS, Linux
 
 ## Playbooks Android
 Ping hosts  
-`ansible-playbook --vault-password-file ../.vault_pass -i inventory playbooks/ping/main.yml --limit m52.pro`  
+`ansible-playbook -v --vault-password-file ../.vault_pass -i inventory playbooks/ping/main.yml --limit m52.pro`  
 
 Update device  
-`ansible-playbook --vault-password-file ../.vault_pass -i inventory playbooks/conf_new_server/main.yml --limit m52.pro --tag template`  
+`ansible-playbook -v --vault-password-file ../.vault_pass -i inventory playbooks/conf_new_server/main.yml --limit m52.pro --tag template`  
 
 ## Playbooks Linux
-Ping hosts  
-`ansible-playbook --vault-password-file ../.vault_pass -i inventory playbooks/ping/main.yml --limit duman.pro`  
-
-Update device  
-`ansible-playbook --vault-password-file ../.vault_pass -i inventory playbooks/conf_new_server/main.yml --limit duman.pro`  
-
 Configure backup server  
-`ansible-playbook --vault-password-file ../.vault_pass -i inventory playbooks/conf_backup_server/main.yml --limit duman.pro`  
+`ansible-playbook -v --vault-password-file ../.vault_pass -i inventory playbooks/conf_new_server_duman/main.yml --limit duman.pro`   
 
 Configure main server  
-`ansible-playbook --vault-password-file ../.vault_pass -i inventory playbooks/conf_new_server_erlan/main.yml --limit erlan.pro`  
+`ansible-playbook -v --vault-password-file ../.vault_pass -i inventory playbooks/conf_new_server_erlan/main.yml --limit erlan.pro`  
 
 ## ansible-lint
 Update ansible-lint from PIP  
