@@ -263,11 +263,6 @@
     group: root
     mode: '0640'
 
-- name: Just force systemd to reread configs (2.4 and above)
-  tags: systemd
-  ansible.builtin.systemd:
-    daemon_reload: true
-
 - name: Enable service 'sftp_mount.service' and ensure it is not masked
   tags:
     - systemd
@@ -276,4 +271,5 @@
     enabled: true
     state: started
     masked: false
+    daemon_reload: true
   ignore_errors: true

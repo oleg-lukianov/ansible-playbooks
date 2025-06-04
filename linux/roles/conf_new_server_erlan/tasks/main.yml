@@ -48,6 +48,7 @@
     - cron
     - crontab
     - telegram
+    - rsyslog
   ansible.builtin.template:
     src: "{{ item.path_in }}/{{ item.j2 }}"
     dest: "{{ item.path_out }}{{ item.name }}"
@@ -61,6 +62,7 @@
     - { j2: record_webcamera.sh.j2, name: record_webcamera.sh, path_in: scripts, path_out: /opt/scripts/, mode: '0755' }
     - { j2: backup_mysql.sh.j2, name: backup_mysql.sh, path_in: scripts, path_out: /opt/scripts/, mode: '0755' }
     - { j2: backup_pgsql.sh.j2, name: backup_pgsql.sh, path_in: scripts, path_out: /opt/scripts/, mode: '0755' }
+    - { j2: rsyslog.conf.j2, name: rsyslog.conf, path_in: rsyslog, path_out: /etc, mode: '0644' }
 
 - name: Create a symbolic link
   tags: systemd
@@ -73,9 +75,11 @@
   loop:
     - { src: /opt/github/python/album/album.service, dest: /etc/systemd/system/album.service }
 
-- name: Just force systemd to reread configs (2.4 and above)
-  tags: systemd
+- name: Start the agent service
+  tags: rsyslog
   ansible.builtin.systemd:
+    name: rsyslog
+    state: restarted
     daemon_reload: true
 
 - name: Enable service 'album.service' and ensure it is not masked
@@ -87,6 +91,7 @@
     enabled: true
     state: started
     masked: false
+    daemon_reload: true
 
 - name: Install flask python package
   tags: album
@@ -169,13 +174,6 @@
   loop:
     - { src: /etc/systemd/system/mjpg_streamer.service, dest: /etc/systemd/system/camera.service }
 
-- name: Just force systemd to reread configs (2.4 and above)
-  tags:
-    - mjpg-streamer
-    - camera
-  ansible.builtin.systemd:
-    daemon_reload: true
-
 - name: Enable service 'mjpg_streamer.service' and ensure it is not masked
   tags:
     - mjpg-streamer
@@ -185,6 +183,7 @@
     enabled: true
     state: started
     masked: false
+    daemon_reload: true
 
 - name: Touch a file, using symbolic modes to set the permissions (equivalent to 0644)
   tags:
