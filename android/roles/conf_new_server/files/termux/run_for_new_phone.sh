@@ -2,7 +2,7 @@
 
 ## Manual for first start ##
 # termux-setup-storage
-# pkg install openssh python -y
+# pkg install openssh python termux-auth -y
 # passwd
 # ssh-keygen -t rsa -b 2048 -f ~/.ssh/id_rsa
 # sshd
