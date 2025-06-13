@@ -1,0 +1,47 @@
+- name: Copy files from template
+  tags: zsh
+  ansible.builtin.template:
+    src: "{{ item.path_in }}/{{ item.j2 }}"
+    dest: "{{ item.path_out }}{{ item.name }}"
+    mode: "{{ item.mode }}"
+    owner: "{{ ansible_user }}"
+    group: "staff"
+  loop:
+    - { j2: .zprofile.j2, name: .zprofile, path_in: home, path_out: "{{ HOME_DIR }}/", mode: '0644' }
+    - { j2: .zshenv.j2, name: .zshenv, path_in: home, path_out: "{{ HOME_DIR }}/", mode: '0644' }
+    - { j2: .zshrc.j2, name: .zshrc, path_in: home, path_out: "{{ HOME_DIR }}/", mode: '0644' }
+    - { j2: .vimrc.j2, name: .vimrc, path_in: home, path_out: "{{ HOME_DIR }}/", mode: '0644' }
+    - { j2: config.j2, name: config, path_in: .aws, path_out: "{{ HOME_DIR }}/.aws/", mode: '0600' }
+    - { j2: config.j2, name: config, path_in: .ssh, path_out: "{{ HOME_DIR }}/.ssh/", mode: '0644' }
+
+- name: Git config email
+  tags: git
+  community.general.git_config:
+    name: user.email
+    scope: file
+    value: "{{ git_email }}"
+    file: "{{ HOME_DIR }}/.gitconfig"
+
+- name: Git config name
+  tags: git
+  community.general.git_config:
+    name: user.name
+    scope: file
+    value: "{{ git_name }}"
+    file: "{{ HOME_DIR }}/.gitconfig"
+
+- name: Git config http.postBuffer
+  tags: git
+  community.general.git_config:
+    name: http.postBuffer
+    scope: file
+    value: 524288000
+    file: "{{ HOME_DIR }}/.gitconfig"
+
+- name: Git config core.autocrlf
+  tags: git
+  community.general.git_config:
+    name: core.autocrlf
+    scope: file
+    value: input
+    file: "{{ HOME_DIR }}/.gitconfig"

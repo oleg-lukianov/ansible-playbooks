@@ -15,6 +15,13 @@ Configure backup server
 Configure main server  
 `ansible-playbook -v --vault-password-file ../.vault_pass -i inventory playbooks/conf_new_server_erlan/main.yml --limit erlan.pro`  
 
+## Playbooks Macbook
+Ping hosts  
+`ansible-playbook -v --vault-password-file ../.vault_pass -i inventory playbooks/ping/main.yml`  
+
+Update device  
+`ansible-playbook -v --vault-password-file ../.vault_pass -i inventory playbooks/conf/main.yml`  
+
 ## ansible-lint
 Update ansible-lint from PIP  
 `pip freeze | grep ansible-lint`  

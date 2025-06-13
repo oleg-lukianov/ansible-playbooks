@@ -42,6 +42,7 @@ done;
 
 # RESTORE
 #	gunzip -c dump_pgsql_test_db_2020-04-23.sql.gz | psql -U test_java test_db
+#   [postgres@erlan ~]$ psql -f /tmp/pg_dumpall.out
 
 sudo su - postgres <<EOF
     pg_dumpall > "$path_out/$title/pg_dumpall.out";

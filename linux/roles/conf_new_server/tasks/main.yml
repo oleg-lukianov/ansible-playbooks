@@ -28,6 +28,8 @@
     state: latest
   loop:
     - postgresql-server.x86_64
+    - timescaledb-tools.x86_64
+    - libpq-devel.x86_64
   ignore_errors: true
 
 - name: Enable service 'postgresql.service' and ensure it is not masked
@@ -49,6 +51,8 @@
   ansible.builtin.template:
     src: sudoers.d/sudo.j2
     dest: "/etc/sudoers.d/{{ ansible_user }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     mode: '0644'
 
 - name: Copy aliases 'manual_aliases.sh'
