@@ -10,10 +10,10 @@ Update device
 
 ## Playbooks Linux
 Configure backup server  
-`ansible-playbook -v --vault-password-file ../.vault_pass -i inventory playbooks/conf_new_server_duman/main.yml --limit duman.pro`   
+`ansible-playbook -v --vault-password-file ../.vault_pass -i inventory playbooks/conf_new_server_duman/main.yml`   
 
 Configure main server  
-`ansible-playbook -v --vault-password-file ../.vault_pass -i inventory playbooks/conf_new_server_erlan/main.yml --limit erlan.pro`  
+`ansible-playbook -v --vault-password-file ../.vault_pass -i inventory playbooks/conf_new_server_erlan/main.yml`  
 
 ## Playbooks Macbook
 Ping hosts  
