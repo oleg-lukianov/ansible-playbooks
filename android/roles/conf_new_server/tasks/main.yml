@@ -197,16 +197,16 @@
     - cron
     - crontab
     - template
-    - start
+    - start1
   ansible.builtin.template:
     src: "termux/{{ item.j2 }}"
     dest: "{{ item.path }}{{ item.name }}"
-    mode: '0660'
+    mode: "{{ item.mode }}"
   loop:
-    - { j2: crontab.j2, name: crontab, path: /storage/emulated/0/scripts/termux/ }
-    - { j2: backup_android_lftp_rsync.conf.j2, name: backup_android_lftp_rsync.conf, path: /storage/emulated/0/github/prod/ }
-    - { j2: github_update.sh.j2, name: github_update.sh, path: /storage/emulated/0/scripts/termux/ }
-    - { j2: bash.bashrc.j2, name: bash.bashrc, path: /data/data/com.termux/files/usr/etc/ }
+    - { j2: crontab.j2, name: crontab, path: /storage/emulated/0/scripts/termux/, mode: '0660' }
+    - { j2: backup_android_lftp_rsync.conf.j2, name: backup_android_lftp_rsync.conf, path: /storage/emulated/0/github/prod/, mode: '0660' }
+    - { j2: github_update.sh.j2, name: github_update.sh, path: /storage/emulated/0/scripts/termux/, mode: '0755' }
+    - { j2: manual_aliases.sh.j2, name: manual_aliases.sh, path: /data/data/com.termux/files/usr/etc/profile.d/, mode: '0755' }
 
 - name: Create a symbolic link
   tags:
