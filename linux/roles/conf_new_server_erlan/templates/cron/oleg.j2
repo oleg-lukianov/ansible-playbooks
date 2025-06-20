@@ -13,7 +13,7 @@ MAILTO=oleg
 @reboot /usr/bin/iperf3 -Ds
 
 # Processes
-* * * * * /home/ALL/scripts/record_webcamera.sh 1>/dev/null
+* * * * * /opt/scripts/record_webcamera.sh 1>/dev/null
 */2 * * * * status=`sudo systemctl is-active sftp_mount`; if [ "$status" = "inactive" -o "$status" = "failed" ]; then echo start; sudo systemctl start sftp_mount; fi
 
 # Backup
