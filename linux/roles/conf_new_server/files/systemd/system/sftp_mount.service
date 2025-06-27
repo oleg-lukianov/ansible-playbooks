@@ -8,7 +8,7 @@ Restart=on-failure
 ExecStart=/opt/common/sftp_mount.sh
 ExecStop=/opt/common/sftp_umount.sh
 RestartSec=20s
-SyslogIdentifier=sshfs
+SyslogIdentifier=sftp_mount
 
 [Install]
 WantedBy=multi-user.target
