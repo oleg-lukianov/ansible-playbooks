@@ -1,0 +1,12 @@
+#!/bin/bash
+
+size_before=$(du -sh "{{ TERRAGRUNT_DIR }}" | awk '{print $1}');
+
+find "{{ TERRAGRUNT_DIR }}/" -name ".terragrunt-cache" -type d -exec rm -rf {} \;
+find "{{ TERRAGRUNT_DIR }}/" -name ".terraform.lock.hcl" -type f -delete;
+
+size_after=$(du -sh "{{ TERRAGRUNT_DIR }}" | awk '{print $1}');
+
+echo "Size before $size_before, Size after $size_after";
+
+exit 0;

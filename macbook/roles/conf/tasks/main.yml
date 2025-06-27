@@ -1,3 +1,15 @@
+- name: Create a directory if it does not exist
+  tags: zsh
+  ansible.builtin.file:
+    path: "{{ item.name }}"
+    force: true
+    state: directory
+    mode: "{{ item.mode }}"
+    owner: "{{ ansible_user }}"
+    group: "staff"
+  loop:
+    - { name: "{{ HOME_DIR }}/.scripts", mode: '0755' }
+
 - name: Copy files from template
   tags: zsh
   ansible.builtin.template:
@@ -13,6 +25,7 @@
     - { j2: .vimrc.j2, name: .vimrc, path_in: home, path_out: "{{ HOME_DIR }}/", mode: '0644' }
     - { j2: config.j2, name: config, path_in: .aws, path_out: "{{ HOME_DIR }}/.aws/", mode: '0600' }
     - { j2: config.j2, name: config, path_in: .ssh, path_out: "{{ HOME_DIR }}/.ssh/", mode: '0644' }
+    - { j2: gitrmcc.sh.j2, name: gitrmcc.sh, path_in: .scripts, path_out: "{{ HOME_DIR }}/.scripts/", mode: '0755' }
 
 - name: Git config email
   tags: git
