@@ -4,4 +4,5 @@ kill -9 "$(lsof | grep HDD_2TB | awk '{print $2}' | tr '\n' ' ')";
 
 fusermount -u {{ SFTP_PATH_OUT }}
 
-echo "{{ SFTP_PASS }}" | sshfs {{ SFTP_USER }}@{{ SFTP_HOST }}:{{ SFTP_PATH_IN }} {{ SFTP_PATH_OUT }}/ -o password_stdin,allow_other,reconnect,sshfs_debug
+# echo "{{ SFTP_PASS }}" | sshfs {{ SFTP_USER }}@{{ SFTP_HOST }}:{{ SFTP_PATH_IN }} {{ SFTP_PATH_OUT }}/ -o password_stdin,allow_other,reconnect,sshfs_debug
+echo "{{ SFTP_PASS }}" | sshfs {{ SFTP_USER }}@{{ SFTP_HOST }}:{{ SFTP_PATH_IN }} {{ SFTP_PATH_OUT }}/ -o password_stdin,allow_other,reconnect
