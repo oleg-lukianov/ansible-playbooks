@@ -289,4 +289,4 @@
   loop:
     - { name: vm.laptop_mode, value: 5 }
     - { name: vm.dirty_writeback_centisecs, value: 6000 }
-    - { name: fs.inotify.max_user_watches, value: 16384 }
+    - { name: fs.inotify.max_user_watches, value: 65536 }
