@@ -56,7 +56,9 @@
     mode: '0644'
 
 - name: Copy aliases 'manual_aliases.sh'
-  tags: profile.d
+  tags:
+    - profile.d
+    - scripts
   ansible.builtin.template:
     src: profile.d/manual_aliases.sh.j2
     dest: /etc/profile.d/manual_aliases.sh
