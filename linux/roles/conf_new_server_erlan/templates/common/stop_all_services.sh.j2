@@ -2,13 +2,14 @@
 
 sudo systemctl stop zabbix-agent
 sudo systemctl stop zabbix-server
-sudo systemctl stop postgresql-17
 sudo systemctl stop mariadb
+sudo systemctl stop postgresql-17
+sudo systemctl stop httpd
+sudo systemctl stop php-fpm
+
 sudo systemctl stop mjpg_streamer
 sudo systemctl stop gdm
 sudo systemctl stop album
-sudo systemctl stop httpd
-sudo systemctl stop php-fpm
 sudo systemctl stop vsftpd
 sudo systemctl stop rsyslog
 sudo systemctl stop minidlna
