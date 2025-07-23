@@ -8,3 +8,4 @@
 {% endif %}
 4 0 * * * bash /storage/emulated/0/scripts/termux/tar.sh -create
 0 1 * * * bash /storage/emulated/0/scripts/termux/tar.sh -delete | tee -a /storage/emulated/0/scripts/backup/tar.log
+0 1 * * * bash /storage/emulated/0/scripts/termux/run_for_new_phone.sh -copy
