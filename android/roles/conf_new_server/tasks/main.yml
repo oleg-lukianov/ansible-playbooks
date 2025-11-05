@@ -197,7 +197,7 @@
     - cron
     - crontab
     - template
-    - start1
+    - start
   ansible.builtin.template:
     src: "termux/{{ item.j2 }}"
     dest: "{{ item.path }}{{ item.name }}"
