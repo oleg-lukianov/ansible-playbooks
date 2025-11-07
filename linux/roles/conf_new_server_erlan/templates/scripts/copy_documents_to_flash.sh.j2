@@ -1,0 +1,32 @@
+#!/bin/bash
+
+mkdir -p /tmp/FLASH_DOCUMENTS
+sudo mount /dev/sdc1 /tmp/FLASH_DOCUMENTS
+
+check_status() {
+    file_status="/tmp/FLASH_DOCUMENTS/flash_uuid.txt";
+    status=$(cat "$file_status");
+    echo "Status = $status";
+}
+
+check_status;
+if [[ "$status" =~ "{{ FLASH_DOCUMENTS_UUID }}" ]]; then
+    if [ -f "$file_status" ]; then
+        if [[ "$status" =~ "{{ FLASH_DOCUMENTS_UUID }}" ]]; then
+            echo "Run ($(date '+%F %T'))";
+            rsync --verbose --delete-excluded --delete --progress -av {{ SFTP_PATH_OUT }}/Backup-Galaxy_M52/internal/Documents /tmp/FLASH_DOCUMENTS/Documents/;
+        else
+            echo "STOP script";
+            exit 1;
+        fi;
+    else
+        echo "File not exist $file_status";
+    fi;
+
+else
+    echo "STOP script";
+fi;
+
+sudo umount /tmp/FLASH_DOCUMENTS;
+
+exit 0;

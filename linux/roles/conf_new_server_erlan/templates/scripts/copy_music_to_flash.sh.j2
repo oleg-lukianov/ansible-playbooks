@@ -7,9 +7,9 @@ check_status() {
 }
 
 check_status;
-if [[ "$status" =~ "{{ FLASH_UUID }}" ]]; then
+if [[ "$status" =~ "{{ FLASH_MUSIC_UUID }}" ]]; then
     if [ -f "$file_status" ]; then
-        if [[ "$status" =~ "{{ FLASH_UUID }}" ]]; then
+        if [[ "$status" =~ "{{ FLASH_MUSIC_UUID }}" ]]; then
             echo "Run ($(date '+%F %T'))";
             rsync --verbose --delete-excluded --delete --progress -av {{ SFTP_PATH_OUT }}/Music /run/media/{{ ansible_user }}/B20C-F595/;
         else
