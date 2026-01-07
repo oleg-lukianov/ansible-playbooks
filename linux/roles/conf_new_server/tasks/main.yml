@@ -7,8 +7,10 @@
     - ansible-core
     - iperf3.x86_64
     - lftp.x86_64
+    - mariadb-connector-odbc.x86_64
     - python3-pip.noarch
     - sysstat.x86_64
+    - zabbix-sender.x86_64
 
 - name: Install a modularity appstream with defined stream
   tags:
