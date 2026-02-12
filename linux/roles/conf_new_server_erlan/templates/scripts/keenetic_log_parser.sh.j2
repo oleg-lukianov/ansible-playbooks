@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [[ "$1" == "" ]]; then
-    log_file="/var/log/keenetic_Keenetic-2983.log.boot"
+    log_file="/var/log/keenetic_Keenetic-2983.log"
 else
     log_file=$1
 fi;
@@ -10,14 +10,14 @@ echo "log_file = '$log_file'"
 
 cat "$log_file" |
 grep -v 'received ACK for\|last message repeated\|sending RELEASE\|NDM DHCP client stopped' |
-grep -v 'starting up' |
+grep -v 'starting up\|directory added\|File exists\|WifiMonitor:' |
 grep -v 'band steering\|last message repeated' |
 grep -v 'updating configuration...\|Neighbour event duplicate rejected' |
 grep -v 'Password authentication succeeded\|Disconnect received\|Child connection from\|Exited normally\|Idle timeout\|Keepalive timeout\|Connection reset by peer\|Started version\|Enabled SFTP service' |
-grep -v 'ipsec:' |
-grep -v 'Enable FTP fastpath\|Disable FTP fastpath' |
+grep -v 'ipsec:\|transmissiond:' |
+grep -v 'Enable FTP fastpath\|Disable FTP fastpath\|connected from' |
 grep -v 'server stopped by UID' |
-grep -v 'Added watch to\|Updating configuration...\|Enabling interface\|Starting configuration update\|Starting MiniDLNA version\|Done serving' |
+grep -v 'Added watch to\|Updating configuration...\|Enabling interface\|Starting configuration update\|Starting MiniDLNA version\|Done serving\|removed.' |
 grep -v 'received ACK\|last message repeated\|NDM DHCP client stopped\|sending RELEASE for' |
 grep -v 'sending ACK of\|DHCPREQUEST received\|DHCPDISCOVER received from\|making OFFER\|DHCPINFORM received\|sending INFORM to\|NDM DHCP Server\|NDM DHCP server stopped\|DHCPDISCOVER received for\|received ARP reply from\|sending NAK to' |
 grep -v 'client disconnected\|started Session\|had associated\|set key done in\|SSH server enabled\|enabled SFTP server\|a default root directory set to\|authenticated\|security level changed to private\|last message repeated\|redirect rule added\|forward rule added\|disconnected\|terminated session' |

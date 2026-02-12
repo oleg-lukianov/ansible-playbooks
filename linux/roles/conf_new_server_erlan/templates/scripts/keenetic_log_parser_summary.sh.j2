@@ -1,0 +1,11 @@
+#!/bin/bash
+
+for log in $( find /var/log/ -not -name "*summary*" -name "keenetic*log" -type f ); do
+    echo "Parse log $log";
+    html=$( echo "$log" | sed 's/\/var\/log/\/var\/www\/html\/keenetic/g' )
+    echo "Result in ${html::-4}_summary.html"
+    echo ""
+    grep -i 'error' "$log" | grep -v 'UNIQUE constraint failed\|Scrape error:\|UPnPError 701\|ERROR 404' > "${html::-4}_summary.html";
+done;
+
+exit 0;

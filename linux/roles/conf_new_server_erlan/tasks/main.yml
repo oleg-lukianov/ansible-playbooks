@@ -53,21 +53,23 @@
     src: "{{ item.path_in }}/{{ item.j2 }}"
     dest: "{{ item.path_out }}{{ item.name }}"
     mode: "{{ item.mode }}"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.owner }}"
   loop:
-    - { j2: oleg.j2, name: oleg, path_in: cron, path_out: /var/spool/cron/, mode: '0600' }
-    - { j2: send_to_telegram.sh.j2, name: send_to_telegram.sh, path_in: common, path_out: /opt/common/, mode: '0755' }
-    - { j2: telegram.j2, name: telegram, path_in: logrotate.d, path_out: /etc/logrotate.d/, mode: '0644' }
-    - { j2: record_webcamera.sh.j2, name: record_webcamera.sh, path_in: scripts, path_out: /opt/scripts/, mode: '0755' }
-    - { j2: backup_mysql.sh.j2, name: backup_mysql.sh, path_in: scripts, path_out: /opt/scripts/, mode: '0755' }
-    - { j2: backup_pgsql.sh.j2, name: backup_pgsql.sh, path_in: scripts, path_out: /opt/scripts/, mode: '0755' }
-    - { j2: rsyslog.conf.j2, name: rsyslog.conf, path_in: rsyslog, path_out: /etc, mode: '0644' }
-    - { j2: stop_all_services.sh.j2, name: stop_all_services.sh, path_in: common, path_out: /opt/common/, mode: '0755' }
-    - { j2: copy_music_to_flash.sh.j2, name: copy_music_to_flash.sh, path_in: scripts, path_out: /opt/common/, mode: '0755' }
-    - { j2: copy_documents_to_flash.sh.j2, name: copy_documents_to_flash.sh, path_in: scripts, path_out: /opt/common/, mode: '0755' }
-    - { j2: folder_sizes.sh.j2, name: folder_sizes.sh, path_in: scripts, path_out: /opt/scripts/, mode: '0755' }
-    - { j2: keenetic_log_parser.sh.j2, name: keenetic_log_parser.sh, path_in: scripts, path_out: /opt/scripts/, mode: '0755' }
+    - { j2: oleg.j2, name: oleg, path_in: cron, path_out: /var/spool/cron/, mode: '0600', owner: "{{ ansible_user }}" }
+    - { j2: send_to_telegram.sh.j2, name: send_to_telegram.sh, path_in: common, path_out: /opt/common/, mode: '0755', owner: "{{ ansible_user }}" }
+    - { j2: telegram.j2, name: telegram, path_in: logrotate.d, path_out: /etc/logrotate.d/, mode: '0644', owner: root }
+    - { j2: keenetic.j2, name: keenetic, path_in: logrotate.d, path_out: /etc/logrotate.d/, mode: '0644', owner: root }
+    - { j2: record_webcamera.sh.j2, name: record_webcamera.sh, path_in: scripts, path_out: /opt/scripts/, mode: '0755', owner: "{{ ansible_user }}" }
+    - { j2: backup_mysql.sh.j2, name: backup_mysql.sh, path_in: scripts, path_out: /opt/scripts/, mode: '0755', owner: "{{ ansible_user }}" }
+    - { j2: backup_pgsql.sh.j2, name: backup_pgsql.sh, path_in: scripts, path_out: /opt/scripts/, mode: '0755', owner: "{{ ansible_user }}" }
+    - { j2: rsyslog.conf.j2, name: rsyslog.conf, path_in: rsyslog, path_out: /etc, mode: '0644', owner: "{{ ansible_user }}" }
+    - { j2: stop_all_services.sh.j2, name: stop_all_services.sh, path_in: common, path_out: /opt/common/, mode: '0755', owner: "{{ ansible_user }}" }
+    - { j2: copy_music_to_flash.sh.j2, name: copy_music_to_flash.sh, path_in: scripts, path_out: /opt/common/, mode: '0755', owner: "{{ ansible_user }}" }
+    - { j2: copy_documents_to_flash.sh.j2, name: copy_documents_to_flash.sh, path_in: scripts, path_out: /opt/common/, mode: '0755', owner: "{{ ansible_user }}" }
+    - { j2: folder_sizes.sh.j2, name: folder_sizes.sh, path_in: scripts, path_out: /opt/scripts/, mode: '0755', owner: "{{ ansible_user }}" }
+    - { j2: keenetic_log_parser.sh.j2, name: keenetic_log_parser.sh, path_in: scripts, path_out: /opt/scripts/, mode: '0755', owner: "{{ ansible_user }}" }
+    - { j2: keenetic_log_parser_summary.sh.j2, name: keenetic_log_parser_summary.sh, path_in: scripts, path_out: /opt/scripts/, mode: '0755', owner: "{{ ansible_user }}" }
 
 - name: Create a symbolic link
   tags: systemd

@@ -11,6 +11,7 @@ MAILTO=oleg
 
 # Monitoring
 @reboot /usr/bin/iperf3 -Ds
+*/15 * * * * /bin/sudo /opt/scripts/keenetic_log_parser_summary.sh
 
 # Processes
 * * * * * /opt/scripts/record_webcamera.sh 1>/dev/null
