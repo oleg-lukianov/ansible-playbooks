@@ -202,3 +202,12 @@
     mode: u=rw,g=rw,o=rw
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
+
+- name: Copy files in sudoers.d
+  tags: zabbix
+  ansible.builtin.template:
+    src: sudoers.d/zabbix.j2
+    dest: /etc/sudoers.d/zabbix
+    owner: root
+    group: root
+    mode: '0644'
