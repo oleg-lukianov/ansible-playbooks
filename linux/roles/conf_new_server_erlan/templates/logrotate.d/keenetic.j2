@@ -7,4 +7,7 @@
     rotate 15
     dateext
     create 0666 {{ ansible_user }} {{ ansible_user }}
+    postrotate
+        /usr/bin/systemctl -s HUP kill rsyslog.service >/dev/null 2>&1 || true
+    endscript
 }

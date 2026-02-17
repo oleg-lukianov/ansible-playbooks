@@ -1,11 +1,50 @@
 #!/bin/bash
 
+function create_html() {
+    script_name=$( basename "$0" );
+    html_name=$( basename "$2" );
+    hostname=$( hostname );
+    step=0;
+
+    echo "<!DOCTYPE html>";
+    echo "<html>";
+    echo "<head>";
+    echo "<title>$html_name</title>";
+    echo "<style>";
+    echo 'th { cursor: pointer; }';
+    echo "</style>";
+    echo "<meta HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=utf-8\">";
+    echo "<meta HTTP-EQUIV=\"refresh\" content=\"60\"></head><body link=\"#6495ED\" vlink=\"#6495ED\" alink=\"#6495ED\">";
+    echo "<b><a href=\"https://zabbix.sabit.keenetic.pro/keenetic/$html_name\">----- Link -----</a></b>";
+    echo "<br>";
+    echo "<center>";
+    echo "<table id=\"myTable\" border=\"1\" cellpacing=\"0\" cellpadding=\"3\" bgcolor=\"#FFFAF0\">";
+    echo "<tr bgcolor=\"#FFE4B5\">";
+    echo "<tr><th bgcolor=\"#FCCDC9\"><center><b>Num</b></center></th><th bgcolor=\"#FCCDC9\"><center><b>Log $script_name</b></center></th></tr>";
+
+    grep -i 'error' "$1" | while IFS= read -r line; do
+        (( step++ ))
+        errors=$( echo "$line" | grep -v 'UNIQUE constraint failed\|Scrape error:\|UPnPError 701\|ERROR 404' );
+        echo "<tr><th style=\"text-align: left;\">$step</th><th style=\"text-align: left;\">$errors</th></tr>";
+    done;
+
+    echo "</tr>";
+    echo "</table>";
+    echo "</center>";
+    echo "<br>";
+    echo "<br>";
+    echo "<div><i>Дата формирования отчёта - $( date "+%F %H:%M:%S" )</i></div>";
+    echo "<div><i>Данные с $hostname:$script_name</i></div>";
+    echo "</body>";
+    echo "</html>"
+}
+
 for log in $( find /var/log/ -not -name "*summary*" -name "keenetic*log" -type f ); do
     echo "Parse log $log";
     html=$( echo "$log" | sed 's/\/var\/log/\/var\/www\/html\/keenetic/g' )
     echo "Result in ${html::-4}_summary.html"
     echo ""
-    grep -i 'error' "$log" | grep -v 'UNIQUE constraint failed\|Scrape error:\|UPnPError 701\|ERROR 404' > "${html::-4}_summary.html";
+    create_html "$log" "${html::-4}_summary.html" > tmpfile && mv tmpfile "${html::-4}_summary.html";
 done;
 
 exit 0;
