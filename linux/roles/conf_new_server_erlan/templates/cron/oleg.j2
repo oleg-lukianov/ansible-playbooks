@@ -18,8 +18,8 @@ MAILTO=oleg
 */2 * * * * status=`sudo systemctl is-active sftp_mount`; if [ "$status" = "inactive" -o "$status" = "failed" ]; then echo start; sudo systemctl start sftp_mount; fi
 
 # Backup
-00 23 * * * /opt/scripts/backup_mysql.sh
-15 23 * * * /opt/scripts/backup_pgsql.sh
+00 23 * * * /bin/sudo /opt/scripts/backup_mysql.sh 2>&1 | tee -a /tmp/backup_mysql.log
+15 23 * * * /opt/scripts/backup_pgsql.sh 2>&1 | tee -a /tmp/backup_pgsql.log
 
 # Monitoring
 00 3 * * * /opt/scripts/folder_sizes.sh
