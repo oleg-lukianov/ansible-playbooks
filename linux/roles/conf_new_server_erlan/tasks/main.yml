@@ -60,6 +60,8 @@
     - { j2: send_to_telegram.sh.j2, name: send_to_telegram.sh, path_in: common, path_out: /opt/common/, mode: '0755', owner: "{{ ansible_user }}" }
     - { j2: telegram.j2, name: telegram, path_in: logrotate.d, path_out: /etc/logrotate.d/, mode: '0644', owner: root }
     - { j2: keenetic.j2, name: keenetic, path_in: logrotate.d, path_out: /etc/logrotate.d/, mode: '0644', owner: root }
+    - { j2: zabbix-agent.j2, name: zabbix-agent, path_in: logrotate.d, path_out: /etc/logrotate.d/, mode: '0644', owner: root }
+    - { j2: zabbix-server.j2, name: zabbix-server, path_in: logrotate.d, path_out: /etc/logrotate.d/, mode: '0644', owner: root }
     - { j2: record_webcamera.sh.j2, name: record_webcamera.sh, path_in: scripts, path_out: /opt/scripts/, mode: '0755', owner: "{{ ansible_user }}" }
     - { j2: backup_mysql.sh.j2, name: backup_mysql.sh, path_in: scripts, path_out: /opt/scripts/, mode: '0755', owner: "{{ ansible_user }}" }
     - { j2: backup_pgsql.sh.j2, name: backup_pgsql.sh, path_in: scripts, path_out: /opt/scripts/, mode: '0755', owner: "{{ ansible_user }}" }
@@ -80,7 +82,7 @@
     group: root
     state: link
   loop:
-    - { src: /opt/github/python/album/album.service, dest: /etc/systemd/system/album.service }
+    - { src: /opt/github/python/album/album.service, dest: /usr/lib/systemd/system/album.service }
 
 - name: Start the agent service
   tags: rsyslog
