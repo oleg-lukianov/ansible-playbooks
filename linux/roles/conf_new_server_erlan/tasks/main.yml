@@ -23,6 +23,7 @@
     - cron
     - crontab
     - telegram
+    - camera
   ansible.builtin.file:
     path: "{{ item.dir }}"
     force: true
@@ -32,6 +33,7 @@
     group: "{{ ansible_user }}"
   loop:
     - { dir: /var/log/telegram, perm: '0775' }
+    - { dir: /opt/scripts/record_webcamera, perm: '0775' }
 
 - name: Touch a file, using symbolic modes to set the permissions (equivalent to 0644)
   tags: telegram

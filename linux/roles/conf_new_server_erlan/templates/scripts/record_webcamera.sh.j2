@@ -4,37 +4,59 @@
 #
 #########  Config  ###########################
 
-catalog="{{ SFTP_PATH_OUT }}/record_webcamera";
+catalog_in="/opt/scripts/record_webcamera";
+catalog_out="{{ SFTP_PATH_OUT }}/record_webcamera";
+mode=$1
 
 #########  Delete old files  #####################
-
-echo "~~~~ Start - Delete old files ~~~~";
-
-find "$catalog/" -type f -mtime +2 -delete;
-
-echo "~~~~ End --- Delete old files ~~~~";
-echo "";
+function delete_old_files() {
+    echo "~~~~ Start - Delete old files ~~~~";
+    find "$catalog_out/" -type f -mtime +2 -delete;
+    echo "~~~~ End --- Delete old files ~~~~";
+}
 
 #########  Record new files  ####################
+function record_new_file() {
+    echo "~~~~ Start - Record new files ~~~~";
+    file_status=${0/sh/status};
 
-echo "~~~~ Start - Record new files ~~~~";
-file_status=${0/sh/status};
+    status=$(cat "$file_status");
+    echo "Status = $status";
 
-status=$(cat "$file_status");
-echo "Status = $status";
+    if [[ "$status" =~ "PROBLEM" ]]; then
+        date="$(date +%Y-%m-%d__%H-%M-%S)";
 
-if [[ "$status" =~ "PROBLEM" ]]; then
         echo "Recording......";
-        echo "cd to $catalog"
-        cd "$catalog" || exit;
+        echo "cd to $catalog_in"
+        cd "$catalog_in" || exit;
         echo "Write ffmpeg stream"
-        ffmpeg -loglevel quiet -t 60 -n -i "http://127.0.0.1:8081/?action=stream" "$(date +%Y-%m-%d__%H-%M-%S)__webcamera.mp4" &
+        ffmpeg -loglevel quiet -t 60 -n -i "http://127.0.0.1:8081/?action=stream" "${date}__webcamera.mp4" &
         echo "Catch snapshot"
-        curl -o "$(date +%Y-%m-%d__%H-%M-%S)__snapshot.jpeg" "http://127.0.0.1:8081/?action=snapshot" 2> /dev/null &
+        curl -o "${date}__snapshot.jpeg" "http://127.0.0.1:8081/?action=snapshot" 2> /dev/null &
+    else
+        echo "No recording......";
+    fi
+
+    echo "~~~~ End --- Record new files ~~~~";
+}
+
+#########  Move all files  ######################
+function move_all_files() {
+    echo "~~~~ Start - Delete old files ~~~~";
+    rsync --verbose --remove-source-files -av "$catalog_in/" "$catalog_out/";
+    echo "~~~~ End --- Delete old files ~~~~";
+}
+
+#########  Main  ################################
+if [[ "$mode" =~ "-record_new_file" ]]; then
+    record_new_file;
+elif [[ "$mode" =~ "-delete_old_files" ]]; then
+    delete_old_files;
+elif [[ "$mode" =~ "-move_all_files" ]]; then
+    move_all_files;
 else
-    echo "No recording......";
+    echo "Not parameters (-record_new_file, -delete_old_files, -move_all_files)";
 fi
 
-echo "~~~~ End --- Record new files ~~~~";
 
 exit 0;

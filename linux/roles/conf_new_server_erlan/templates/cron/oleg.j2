@@ -14,12 +14,14 @@ MAILTO=oleg
 */15 * * * * /bin/sudo /opt/scripts/keenetic_log_parser_summary.sh
 
 # Processes
-* * * * * /opt/scripts/record_webcamera.sh 1>/dev/null
-*/2 * * * * status=`sudo systemctl is-active sftp_mount`; if [ "$status" = "inactive" -o "$status" = "failed" ]; then echo start; sudo systemctl start sftp_mount; fi
+* * * * * /opt/scripts/record_webcamera.sh -record_new_file 1>/dev/null
+0 3 * * * /opt/scripts/record_webcamera.sh -delete_old_files 1>/dev/null
+*/15 * * * * /opt/scripts/record_webcamera.sh -move_all_files 1>/dev/null
+*/5 * * * * status=`sudo systemctl is-active sftp_mount`; if [ "$status" = "inactive" -o "$status" = "failed" ]; then echo start; sudo systemctl start sftp_mount; fi
 
 # Backup
-00 23 * * * /bin/sudo /opt/scripts/backup_mysql.sh 2>&1 | tee /tmp/backup_mysql.log
-15 23 * * * /opt/scripts/backup_pgsql.sh 2>&1 | tee /tmp/backup_pgsql.log
+00 4 * * * /bin/sudo /opt/scripts/backup_mysql.sh 2>&1 | tee /tmp/backup_mysql.log
+15 4 * * * /bin/sudo /opt/scripts/backup_pgsql.sh 2>&1 | tee /tmp/backup_pgsql.log
 
 # Monitoring
-00 3 * * * /opt/scripts/folder_sizes.sh
+00 5 * * * /opt/scripts/folder_sizes.sh

@@ -4,7 +4,7 @@ view_help() {
     echo -e "\e[0;91m*****HELP*****\e[0m
     \e[0;93m
     Example start script
-    ./send_to_telegram.sh -h \"Duman\" -s \"PROBLEM\" -t \"Alarm in selinux log\" -c \"2019-07-28 14:09:24\" -a \"Centos 7\" -z \"Home_Alarm\" -w \"Low\"
+    ./send_to_telegram.sh -h \"Duman\" -s \"PROBLEM\" -t \"Alarm in selinux log\" -c \"2019-07-28 14:09:24\" -a \"Centos 7\" -z \"Home_Admin_Alarm\" -w \"Low\" -x \"Home: Admin alarm (Telegram)\"
 
     -h Hostname
     -s Status
@@ -13,6 +13,7 @@ view_help() {
     -a Alias
     -z CHAT_ID
     -w Warning
+    -x Action name
     \e[0m
     \e[0;91m**************\e[0m";
 };
@@ -32,7 +33,7 @@ if [ ! -z "$1" ]; then
         CHAT_ID={{ TELEGRAM_CHAT_HOME_ALARM }}
         URL="https://api.telegram.org/bot$TOKEN/sendMessage"
 
-        while getopts ":h:s:t:c:a:z:w:" opt; do
+        while getopts ":h:s:t:c:a:z:w:x:" opt; do
             case "$opt" in
                 h) HOST="<b>Host:</b> $OPTARG" ;;
                 s) STATUS="<b>Status:</b> $OPTARG" ;;
@@ -46,11 +47,12 @@ if [ ! -z "$1" ]; then
                 z)
                     if [ ! -z "$OPTARG" ]; then
                         case $OPTARG in
-{{ TELEGRAM_CHATS }}
+                            {{ TELEGRAM_CHATS }}
                         esac
                     fi
                 ;;
                 w) SEVERITY="<b>Severity:</b> $OPTARG" ;;
+                x) ACTION_NAME="<b>Action name:</b> $OPTARG" ;;
                 *) echo "usage: $0 [-v] [-r]" >&2
                 exit 1 ;;
             esac
@@ -68,6 +70,7 @@ $CLOCK"
         echo -e "--------- Start ---------
 -- $CLOCK --
 $MESSAGE
+$ACTION_NAME
 ---------- End ----------
 " | sed -r 's/<b>//' | sed -r 's/<\/b>//' >> /var/log/telegram/telegram.log
 

@@ -30,10 +30,12 @@ echo -e "\e[0;91m~~~~ Start DUMP $title (Time $(date +%T)) ~~~~\e[0m";
 echo "";
 
 for x in "${databases[@]}"; do
+    dump_name="dump_pgsql_${x}_$(date +%F).sql.gz";
 
-    echo -e "\e[0;91m~~~~ Start DUMP $x (Time $(date +%T)) ~~~~\e[0m";
+    echo -e "\e[0;91m~~~~ Start DUMP $x, dump_name=$dump_name (Time $(date +%T)) ~~~~\e[0m";
     sudo su - postgres <<EOF
-        pg_dump --verbose $x -h localhost | gzip > "$path_out/$title/dump_pgsql_${x}_$(date +%F).sql.gz";
+        pg_dump --verbose $x -h localhost | gzip > "/tmp/$dump_name";
+        mv --verbose "/tmp/${dump_name}" "$path_out/$title/";
 EOF
 done;
 
@@ -46,7 +48,8 @@ done;
 
 echo -e "\e[0;91m~~~~ Start pg_dumpall (Time $(date +%T)) ~~~~\e[0m";
 sudo su - postgres <<EOF
-    pg_dumpall > "$path_out/$title/pg_dumpall.out";
+    pg_dumpall > "/tmp/pg_dumpall.out";
+    mv --verbose "/tmp/pg_dumpall.out" "$path_out/$title/";
 EOF
 
 find "$path_out/$title/"* -name "dump_pgsql_*" -mtime +30 -exec rm -rf {} \;
