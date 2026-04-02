@@ -1,0 +1,55 @@
+#!/bin/bash
+
+path="/opt/scripts";
+lst="sites.lst";
+html="sites.html";
+
+function create_lst() {
+    find /var/www/html/ -name "index.html" -type f -not -path "*/OLD/*" -not -path "*/modx-2.7.0-pl/*" -not -path "*/beushki*" 2>/dev/null | sed 's/\/var\/www\/html/https:\/\/web.sabit.keenetic.pro/g' > "${path}/${lst}"
+}
+
+function create_html() {
+    script_name=$( basename "$0" );
+    html_name="Sites";
+    hostname=$HOSTNAME;
+    step=0;
+
+    echo "<!DOCTYPE html>";
+    echo "<html>";
+    echo "<head>";
+    echo "<title>$html_name</title>";
+    echo "<style>";
+    echo 'th { cursor: pointer; }';
+    echo "</style>";
+    echo "<meta HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=utf-8\">";
+    echo "<meta HTTP-EQUIV=\"refresh\" content=\"60\"></head><body link=\"#6495ED\" vlink=\"#6495ED\" alink=\"#6495ED\">";
+    echo "<b><a href=\"https://web.sabit.keenetic.pro/$2\">----- Link -----</a></b>";
+    echo "<br>";
+    echo "<center>";
+    echo "<table id=\"myTable\" border=\"1\" cellpacing=\"0\" cellpadding=\"3\" bgcolor=\"#FFFAF0\">";
+    echo "<tr bgcolor=\"#FFE4B5\">";
+    echo "<tr><th bgcolor=\"#FCCDC9\"><center><b>Num</b></center></th><th bgcolor=\"#FCCDC9\"><center><b>Log $html_name</b></center></th></tr>";
+
+    grep -i 'http' "${path}/${lst}" | while IFS= read -r line; do
+        (( step++ ))
+        a_tag="<a href=\"$line\">$line</a>";
+        echo "<tr><th style=\"text-align: left;\">$step</th><th style=\"text-align: left;\">$a_tag</th></tr>";
+    done;
+
+    echo "</tr>";
+    echo "</table>";
+    echo "</center>";
+    echo "<br>";
+    echo "<br>";
+    echo "<div><i>Дата формирования отчёта - $( date "+%F %H:%M:%S" )</i></div>";
+    echo "<div><i>Данные с $hostname:$path/$script_name</i></div>";
+    echo "</body>";
+    echo "</html>"
+}
+
+create_lst
+create_html "${path}/${lst}" "${html}" > "${path}/tmpfile"
+sudo mv "${path}/tmpfile" "/var/www/html/${html}";
+
+
+exit 0;
