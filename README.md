@@ -15,6 +15,9 @@ Configure backup server
 Configure main server  
 `ansible-playbook -v --vault-password-file ../.vault_pass -i inventory playbooks/conf_new_server_erlan/main.yml`  
 
+Change password for sftp_mount  
+`ansible-playbook -v --vault-password-file ../.vault_pass -i inventory playbooks/conf_new_server_erlan/main.yml --tags vault,systemd,scripts`  
+
 Configure minidlna  
 `ansible-playbook -v --vault-password-file ../.vault_pass -i inventory playbooks/minidlna/main.yml --limit erlan.pro --tags minidlna`  
 
