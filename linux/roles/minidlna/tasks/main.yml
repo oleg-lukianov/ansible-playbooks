@@ -23,6 +23,17 @@
     groups: oleg
     append: true
 
+- name: Modification service 'minidlna'
+  tags: minidlna
+  community.general.ini_file:
+    dest: /usr/lib/systemd/system/minidlna.service
+    owner: root
+    group: root
+    mode: '0644'
+    section: Service
+    option: TimeoutStartSec
+    value: 300
+
 - name: Restart service 'minidlna.service', if running
   tags: minidlna
   ansible.builtin.systemd:
