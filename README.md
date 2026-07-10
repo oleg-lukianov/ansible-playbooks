@@ -26,7 +26,7 @@ Ping hosts
 `ansible-playbook -v --vault-password-file ../.vault_pass -i inventory playbooks/ping/main.yml`  
 
 Update device  
-`ansible-playbook -v --vault-password-file ../.vault_pass -i inventory playbooks/conf/main.yml`  
+`ansible-playbook -v --vault-password-file ../.vault_pass -i inventory playbooks/conf/main.yml --tags zsh`  
 
 ## ansible-lint
 Update ansible-lint from PIP  
