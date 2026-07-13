@@ -12,6 +12,27 @@
     - sysstat.x86_64
     - zabbix-sender.x86_64
 
+- name: Add repository Docker
+  tags: install
+  ansible.builtin.yum_repository:
+    name: docker-ce
+    description: Docker repo
+    baseurl: https://download.docker.com/linux/rhel/$releasever/$basearch/stable
+    gpgcheck: true
+    gpgkey: https://download.docker.com/linux/rhel/gpg
+
+- name: Install the latest version
+  tags: install
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: latest
+  loop:
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+    - docker-buildx-plugin
+    - docker-compose-plugin
+
 - name: Install a modularity appstream with defined stream
   tags:
     - postgresql
