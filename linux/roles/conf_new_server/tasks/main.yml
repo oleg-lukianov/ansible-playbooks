@@ -137,6 +137,7 @@
     - { path: /opt/github/prod }
     - { path: /opt/github/ansible-playbooks }
     - { path: /opt/github/python }
+    - { path: /opt/github/python-zabbix-utils }
 
 - name: Create a directory if it does not exist
   tags:
@@ -179,6 +180,7 @@
     - { repo: https://github.com/oleg-lukianov/prod.git, dest: /opt/github/prod }
     - { repo: https://github.com/oleg-lukianov/ansible-playbooks.git, dest: /opt/github/ansible-playbooks }
     - { repo: https://github.com/oleg-lukianov/python.git, dest: /opt/github/python }
+    - { repo: https://github.com/zabbix/python-zabbix-utils.git, dest: /opt/github/python-zabbix-utils }
   ignore_errors: true
 
 - name: Recursively change ownership of a directory /opt/github

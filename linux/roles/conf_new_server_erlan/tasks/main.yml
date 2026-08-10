@@ -75,6 +75,7 @@
     - { j2: keenetic_log_parser.sh.j2, name: keenetic_log_parser.sh, path_in: scripts, path_out: /opt/scripts/, mode: '0755', owner: "{{ ansible_user }}" }
     - { j2: keenetic_log_parser_summary.sh.j2, name: keenetic_log_parser_summary.sh, path_in: scripts, path_out: /opt/scripts/, mode: '0755', owner: "{{ ansible_user }}" }
     - { j2: sites.sh.j2, name: sites.sh, path_in: scripts, path_out: /opt/scripts/, mode: '0755', owner: "{{ ansible_user }}" }
+    - { j2: update_maintenance_15min.py.j2, name: update_maintenance_15min.py, path_in: scripts, path_out: /opt/scripts/, mode: '0755', owner: "{{ ansible_user }}" }
 
 - name: Create a symbolic link
   tags: systemd

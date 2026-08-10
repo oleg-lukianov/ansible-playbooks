@@ -1,0 +1,96 @@
+# Copyright (C) 2001-2023 Zabbix SIA
+#
+# Zabbix SIA licenses this file to you under the MIT License.
+# See the LICENSE file in the project root for more information.
+
+# Work version
+# python-zabbix-utils % git remote -v
+# origin  https://github.com/zabbix/python-zabbix-utils.git (fetch)
+# origin  https://github.com/zabbix/python-zabbix-utils.git (push)
+# python-zabbix-utils % git log
+# commit fa08c1c8fecb1c2e7b9bddb85ce0b97e2012f646 (HEAD -> main, tag: v2.0.4, origin/main, origin/HEAD)
+# Merge: 9521f00 036b0c3
+# Author: Aleksandr Iantsen <128615146+aiantsen@users.noreply.github.com>
+# Date:   Wed Dec 17 11:29:40 2025 +0200
+#     Release v2.0.4
+
+import sys
+sys.path.append('/opt/github/python-zabbix-utils')
+from zabbix_utils import ZabbixAPI
+from datetime import datetime, timezone
+import time
+
+ZABBIX_AUTH = {
+        "url": "{{ ZABBIX_URL }}",    # Zabbix server URL or IP address
+        "user": "{{ ZABBIX_API_BOT_NAME }}",       # Zabbix user name for authentication
+        "password": "{{ ZABBIX_API_BOT_PASS }}"   # Zabbix user password for authentication
+    }
+
+api = ZabbixAPI(**ZABBIX_AUTH)
+
+class ZabbixMaintenance:
+
+    @staticmethod
+    def getMaintenanceStatus():
+        maintenance_status = 0
+        if api.check_auth():
+
+            while maintenance_status == 0:
+
+                hosts = api.host.get(
+                    hostids=10544,
+                    output=['hostid', 'name', 'maintenanceid', 'maintenance_status']
+                )
+
+                for host in hosts:
+                    today = datetime.now()
+                    format_date = today.strftime("%d.%m.%Y %H:%M:%S")
+                    print("Name: " + host['name'] + format_date)
+                    print("Maintenanceid: " + host['maintenanceid'])
+                    print("Maintenance_status: " + host['maintenance_status'] + " (0 - disable, 1 - enable)" + "\n")
+                    maintenance_status = int(host['maintenance_status'])
+
+                if maintenance_status == 0:
+                    try:  
+                        for num in range(0,1):
+                            # print("Timer = " + str(num) + " sec")
+                            time.sleep(1)
+                    except (KeyError, KeyboardInterrupt):
+                        print('\nExit. User press Ctrl+C (KeyboardInterrupt)')
+                        break
+
+
+    @staticmethod
+    def updateMaintenance15min():
+        if api.check_auth():
+
+            now_utc = int(datetime.now(timezone.utc).timestamp())
+
+            maintenances = api.maintenance.update(
+                maintenanceid=2,
+                # hosts=[
+                #     {"hostid": "10610"},
+                #     {"hostid": "10611"}
+                #     ],
+                timeperiods= [{
+                    "period": 900,
+                    "timeperiod_type": 0,
+                    "start_date": now_utc
+                    }]
+            )
+            # print(maintenances)
+            print("\nUpdated maintenance 'All', added 15 min\n")
+
+
+    def main(self):
+        """
+        Documentation
+        """
+        self.updateMaintenance15min()
+        self.getMaintenanceStatus()
+        api.logout()
+
+
+if __name__ == "__main__":
+    zabbixMaintenance = ZabbixMaintenance()
+    zabbixMaintenance.main()
