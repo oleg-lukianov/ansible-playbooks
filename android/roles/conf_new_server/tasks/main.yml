@@ -136,7 +136,7 @@
 - name: Git clone "prod"
   tags: git
   ansible.builtin.git:
-    repo: https://github.com/oleg-lukianov/prod.git
+    repo: git@github.com:oleg-lukianov/prod.git
     dest: /storage/emulated/0/github/prod
     update: true
     force: true
@@ -170,7 +170,7 @@
   loop: "{{ ssh_known_hosts }}"
 
 - name: Set authorized key taken from file
-  tags: git1
+  tags: git
   ansible.posix.authorized_key:
     user: "{{ ansible_user_id }}"
     state: present

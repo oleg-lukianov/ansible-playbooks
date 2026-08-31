@@ -45,7 +45,7 @@ class ZabbixMaintenance:
                 for host in hosts:
                     today = datetime.now()
                     format_date = today.strftime("%d.%m.%Y %H:%M:%S")
-                    print("Name: " + host['name'] + format_date)
+                    print("Name: " + host['name'] + " " + format_date)
                     print("Maintenanceid: " + host['maintenanceid'])
                     print("Maintenance_status: " + host['maintenance_status'] + " (0 - disable, 1 - enable)" + "\n")
                     maintenance_status = int(host['maintenance_status'])
