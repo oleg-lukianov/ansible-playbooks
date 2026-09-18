@@ -3,10 +3,10 @@ Repo for automation configure Android, MacOS, Linux
 
 ## Playbooks Android
 Ping hosts  
-`ansible-playbook -v --vault-password-file ../.vault_pass -i inventory playbooks/ping/main.yml --limit m52.pro`  
+`ansible-playbook -v --vault-password-file ../.vault_pass -i inventory playbooks/ping/main.yml --limit a17.pro`  
 
 Update device  
-`ansible-playbook -v --vault-password-file ../.vault_pass -i inventory playbooks/conf_new_server/main.yml --limit m52.pro --tag template`  
+`ansible-playbook -v --vault-password-file ../.vault_pass -i inventory playbooks/conf_new_server/main.yml --limit a17.pro --tag template`  
 
 ## Playbooks Linux
 Configure backup server  
@@ -42,7 +42,7 @@ Check code
 
 ## Help commands
 Run from specific task  
-`ansible-playbook --vault-password-file ../.vault_pass -i inventory playbooks/conf_new_server/main.yml --limit m52.pro --start-at-task="Create a symbolic link for 'a71.pro'"`
+`ansible-playbook --vault-password-file ../.vault_pass -i inventory playbooks/conf_new_server/main.yml --limit a17.pro --start-at-task="Create a symbolic link for 'a71.pro'"`
 
 Encrypt/decrypt inventory  
 `cd android`  

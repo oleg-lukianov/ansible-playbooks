@@ -135,9 +135,9 @@
     state: absent
 
 - name: Git clone "prod"
-  tags: git
+  tags: git2
   ansible.builtin.git:
-    repo: git@github.com:oleg-lukianov/prod.git
+    repo: https://github.com/oleg-lukianov/prod.git
     dest: /storage/emulated/0/github/prod
     update: true
     force: true
