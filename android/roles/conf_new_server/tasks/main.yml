@@ -135,7 +135,7 @@
     state: absent
 
 - name: Git clone "prod"
-  tags: git2
+  tags: git
   ansible.builtin.git:
     repo: https://github.com/oleg-lukianov/prod.git
     dest: /storage/emulated/0/github/prod
@@ -143,6 +143,15 @@
     force: true
     version: main
   ignore_errors: true
+
+- name: Add remote origin2 "prod"
+  tags: git
+  ansible.builtin.command:
+    cmd: git remote add origin2 git@github.com:oleg-lukianov/prod.git
+    chdir: /storage/emulated/0/github/prod
+  register: git_remote
+  failed_when: false
+  changed_when: git_remote.rc == 0
 
 - name: Git clone "private" (remove .lock file)
   tags: git
@@ -153,7 +162,7 @@
 - name: Git clone "private"
   tags: git
   ansible.builtin.git:
-    repo: git@github.com:oleg-lukianov/private.git
+    repo: "https://oleg-lukianov:{{ GIT_CREDENTIALS }}@github.com/oleg-lukianov/private.git"
     dest: /storage/emulated/0/github/private
     update: true
     force: true
