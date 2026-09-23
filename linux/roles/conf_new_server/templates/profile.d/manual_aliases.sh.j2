@@ -1,5 +1,8 @@
-# Manual aliases version 29.01.2024
+# User specific environment
+PATH="/home/{{ ansible_user }}/Android/Sdk/platform-tools:$PATH"
+export PATH
 
+# Manual aliases
 alias ll='ls -lah'
 alias we='/etc/profile.d/welcome.sh'
 alias home="cd /opt/scripts/"
@@ -7,6 +10,7 @@ alias com="cd /opt/common/"
 alias pub="cd {{ SFTP_PATH_OUT }}/"
 alias web="cd /var/www/html/"
 alias github='cd /opt/github'
+alias adbgeotex='h=192.168.2.191:5555; adb -s $h logcat --pid=$(adb -s $h shell pidof -s com.google.android.youtube.tv)'
 
 # Custom aliases
 {{ BASHRC }}
