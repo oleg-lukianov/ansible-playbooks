@@ -1,0 +1,19 @@
+#!/usr/bin/bash
+
+HOST="{{ GEOTEX_IP }}:5555"
+
+echo -e "\e[0;93m~~~~ adb devices -l ~~~~\e[0m";
+adb devices -l;
+
+echo -e "\e[0;93m~~~~ adb connect $HOST ~~~~\e[0m";
+adb connect "$HOST";
+
+echo -e "\e[0;93m~~~~ adb logcat --buffer-size=200M ~~~~\e[0m";
+adb logcat --buffer-size=200M;
+
+PID=$(adb -s "$HOST" shell pidof -s com.google.android.youtube.tv);
+echo -e "\e[0;93m~~~~ Host = $HOST, PID = $PID ~~~~\e[0m";
+
+adb -s "$HOST" logcat --pid="$PID";
+
+exit 0;
