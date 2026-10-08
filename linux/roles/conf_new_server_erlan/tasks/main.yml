@@ -77,6 +77,8 @@
     - { j2: sites.sh.j2, name: sites.sh, path_in: scripts, path_out: /opt/scripts/, mode: '0755', owner: "{{ ansible_user }}" }
     - { j2: update_maintenance_15min.py.j2, name: update_maintenance_15min.py, path_in: scripts, path_out: /opt/scripts/, mode: '0755', owner: "{{ ansible_user }}" }
     - { j2: adb_geotex.sh.j2, name: adb_geotex.sh, path_in: scripts, path_out: /opt/scripts/, mode: '0755', owner: "{{ ansible_user }}" }
+    - { j2: beep.sh.j2, name: beep.sh, path_in: scripts, path_out: /opt/scripts/, mode: '0755', owner: "{{ ansible_user }}" }
+    - { j2: beep.status, name: beep.status, path_in: scripts, path_out: /opt/scripts/, mode: '0666', owner: "{{ ansible_user }}" }
 
 - name: Create a symbolic link
   tags: systemd

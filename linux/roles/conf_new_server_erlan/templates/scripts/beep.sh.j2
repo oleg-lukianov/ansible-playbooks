@@ -1,0 +1,24 @@
+#!/bin/bash
+
+file_status=${0//sh/status};
+
+echo "Set volume 70%";
+amixer -c 0 set Master 70%;
+
+for x in {0..50}; do
+    status=$( cat "$file_status" );
+    echo "Status = $status";
+    if [[ "$status" =~ "PROBLEM" ]]; then
+        echo "Beep $x second(s) !!!";
+        speaker-test -D plughw:0,0 -t sine -f 1000 -l 1;
+        sleep 5;
+    else
+        break;
+    fi;
+
+done;
+
+echo "Set volume 50%";
+amixer -c 0 set Master 50%;
+
+exit 0;
