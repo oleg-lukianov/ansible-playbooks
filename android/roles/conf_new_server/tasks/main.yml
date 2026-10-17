@@ -107,6 +107,7 @@
     - { path: /storage/emulated/0/github/private }
     - { path: /storage/emulated/0/scripts }
     - { path: /storage/emulated/0/github/ansible-playbooks }
+    - { path: /storage/emulated/0/github/python }
 
 - name: Create a directory if it does not exist
   tags:
