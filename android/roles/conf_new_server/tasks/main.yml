@@ -171,6 +171,23 @@
   when: private_mode is true
   ignore_errors: true
 
+- name: Git clone "python" (remove .lock file)
+  tags: git
+  ansible.builtin.file:
+    path: /storage/emulated/0/github/python/*.lock
+    state: absent
+
+- name: Git clone "python"
+  tags: git
+  ansible.builtin.git:
+    repo: "https://oleg-lukianov:{{ GIT_CREDENTIALS }}@github.com/oleg-lukianov/python.git"
+    dest: /storage/emulated/0/github/python
+    update: true
+    force: true
+    version: main
+  when: private_mode is true
+  ignore_errors: true
+
 - name: Another way to call known_hosts
   tags: git
   ansible.builtin.known_hosts:
