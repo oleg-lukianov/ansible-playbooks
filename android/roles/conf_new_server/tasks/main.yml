@@ -135,7 +135,7 @@
     path: /storage/emulated/0/github/prod/*.lock
     state: absent
 
-- name: Git clone "prod"
+- name: Git clone "prod" without credentials
   tags: git
   ansible.builtin.git:
     repo: https://github.com/oleg-lukianov/prod.git
@@ -144,15 +144,18 @@
     force: true
     version: main
   ignore_errors: true
+  when: hostname != "a17.pro"
 
-- name: Add remote origin2 "prod"
+- name: Git clone "prod" with credentials
   tags: git
-  ansible.builtin.command:
-    cmd: git remote add origin2 git@github.com:oleg-lukianov/prod.git
-    chdir: /storage/emulated/0/github/prod
-  register: git_remote
-  failed_when: false
-  changed_when: git_remote.rc == 0
+  ansible.builtin.git:
+    repo: https://oleg-lukianov:{{ GIT_CREDENTIALS }}@github.com/oleg-lukianov/prod.git
+    dest: /storage/emulated/0/github/prod
+    update: true
+    force: true
+    version: main
+  ignore_errors: true
+  when: hostname == "a17.pro"
 
 - name: Git clone "private" (remove .lock file)
   tags: git
