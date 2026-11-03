@@ -8,6 +8,7 @@
 # sshd
 
 ## Manual for reinstall ##
+# bash /storage/emulated/0/scripts/termux/run_for_new_phone.sh -copy
 # termux-setup-storage
 # bash /storage/emulated/0/scripts/termux/run_for_new_phone.sh -install
 # bash /storage/emulated/0/scripts/termux/run_for_new_phone.sh -restore
