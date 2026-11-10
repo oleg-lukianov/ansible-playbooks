@@ -8,16 +8,34 @@ import subprocess
 import sys
 import time
 from urllib.parse import urlparse
+from pathlib import Path
 
 import requests
 
-TUYA_ACCESS_ID = os.environ["TUYA_ACCESS_ID"]
-TUYA_ACCESS_SECRET = os.environ["TUYA_ACCESS_SECRET"]
-TUYA_REGION = os.getenv("TUYA_REGION", "eu")
+config_path = Path(__file__).resolve().parent / "tuya.conf"
+config = {}
 
+with config_path.open(encoding="utf-8") as file:
+    for line_number, line in enumerate(file, start=1):
+        line = line.strip()
+
+        # Пропускаємо порожні рядки та коментарі
+        if not line or line.startswith("#"):
+            continue
+
+        key, separator, value = line.partition("=")
+
+        if not separator or not key.strip():
+            raise ValueError(f"Некоректний рядок {line_number} у test.conf")
+
+        config[key.strip()] = value.strip()
+
+TUYA_ACCESS_ID = config["TUYA_ACCESS_ID"]
+TUYA_ACCESS_SECRET = config["TUYA_ACCESS_SECRET"]
+ZABBIX_SERVER = config["ZABBIX_SERVER"]
+TUYA_REGION = os.getenv("TUYA_REGION", "eu")
 TUYA_DEVICE_ID = sys.argv[1]
 
-ZABBIX_SERVER = os.getenv("ZABBIX_SERVER")
 ZABBIX_PORT = os.getenv("ZABBIX_PORT", "10051")
 ZABBIX_HOST = os.getenv("ZABBIX_HOST", TUYA_DEVICE_ID)
 

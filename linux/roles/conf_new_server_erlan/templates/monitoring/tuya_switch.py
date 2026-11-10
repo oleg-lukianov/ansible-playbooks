@@ -6,12 +6,31 @@ import json
 import os
 import sys
 import time
+from pathlib import Path
 
 import requests
 
-TUYA_ACCESS_ID = os.environ["TUYA_ACCESS_ID"]
-TUYA_ACCESS_SECRET = os.environ["TUYA_ACCESS_SECRET"]
-TUYA_DEVICE_ID = os.environ["TUYA_DEVICE_ID"]
+config_path = Path(__file__).resolve().parent / "tuya.conf"
+config = {}
+
+with config_path.open(encoding="utf-8") as file:
+    for line_number, line in enumerate(file, start=1):
+        line = line.strip()
+
+        # Пропускаємо порожні рядки та коментарі
+        if not line or line.startswith("#"):
+            continue
+
+        key, separator, value = line.partition("=")
+
+        if not separator or not key.strip():
+            raise ValueError(f"Некоректний рядок {line_number} у test.conf")
+
+        config[key.strip()] = value.strip()
+
+TUYA_ACCESS_ID = config["TUYA_ACCESS_ID"]
+TUYA_ACCESS_SECRET = config["TUYA_ACCESS_SECRET"]
+TUYA_DEVICE_ID = config["TUYA_DEVICE_ID"]
 TUYA_REGION = os.getenv("TUYA_REGION", "eu")
 
 # Обычно для европейского региона:
