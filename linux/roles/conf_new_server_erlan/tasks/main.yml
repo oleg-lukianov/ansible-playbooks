@@ -33,6 +33,9 @@
     group: "{{ ansible_user }}"
   loop:
     - { dir: /var/log/telegram, perm: '0775' }
+    - { dir: /opt/scripts, perm: '0775' }
+    - { dir: /opt/common, perm: '0775' }
+    - { dir: /opt/monitoring, perm: '0775' }
     - { dir: /opt/scripts/record_webcamera, perm: '0775' }
 
 - name: Touch a file, using symbolic modes to set the permissions (equivalent to 0644)
@@ -79,6 +82,10 @@
     - { j2: adb_geotex.sh.j2, name: adb_geotex.sh, path_in: scripts, path_out: /opt/scripts/, mode: '0755', owner: "{{ ansible_user }}" }
     - { j2: beep.sh.j2, name: beep.sh, path_in: scripts, path_out: /opt/scripts/, mode: '0755', owner: "{{ ansible_user }}" }
     - { j2: beep.status, name: beep.status, path_in: scripts, path_out: /opt/scripts/, mode: '0666', owner: "{{ ansible_user }}" }
+    - { j2: tuya_metrics.py, name: tuya_metrics.py, path_in: monitoring, path_out: /opt/monitoring/, mode: '0755', owner: "{{ ansible_user }}" }
+    - { j2: tuya_switch.py, name: tuya_switch.py, path_in: monitoring, path_out: /opt/monitoring/, mode: '0755', owner: "{{ ansible_user }}" }
+    - { j2: tuya_send_metrics.sh, name: tuya_send_metrics.sh, path_in: monitoring, path_out: /opt/monitoring/, mode: '0755', owner: "{{ ansible_user }}" }
+    - { j2: tuya.env.j2, name: tuya.env, path_in: monitoring, path_out: /opt/monitoring/, mode: '0600', owner: "{{ ansible_user }}" }
 
 - name: Create a symbolic link
   tags: systemd
