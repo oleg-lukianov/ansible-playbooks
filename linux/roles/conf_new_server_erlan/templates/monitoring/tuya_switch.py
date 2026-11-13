@@ -10,6 +10,11 @@ from pathlib import Path
 
 import requests
 
+if len(sys.argv) < 2:
+    print(f"Example run: {sys.argv[0]} \"TUYA_DEVICE_ID\" \"on\"")
+    print(f"Example run: {sys.argv[0]} \"TUYA_DEVICE_ID\" \"off\"")
+    sys.exit()
+
 config_path = Path(__file__).resolve().parent / "tuya.conf"
 config = {}
 
@@ -30,8 +35,8 @@ with config_path.open(encoding="utf-8") as file:
 
 TUYA_ACCESS_ID = config["TUYA_ACCESS_ID"]
 TUYA_ACCESS_SECRET = config["TUYA_ACCESS_SECRET"]
-TUYA_DEVICE_ID = config["TUYA_DEVICE_ID"]
 TUYA_REGION = os.getenv("TUYA_REGION", "eu")
+TUYA_DEVICE_ID = sys.argv[1]
 
 # Обычно для европейского региона:
 TUYA_BASE_URLS = {
@@ -173,12 +178,12 @@ def send_switch_command(access_token: str, enabled: bool):
 
 
 def main():
-    if len(sys.argv) != 2 or sys.argv[1] not in ("on", "off"):
+    if len(sys.argv) != 3 or sys.argv[2] not in ("on", "off"):
         print(f"Использование: {sys.argv[0]} on|off")
         print(f"Пример: {sys.argv[0]} on")
         sys.exit(2)
 
-    command = sys.argv[1]
+    command = sys.argv[2]
     enabled = command == "on"
 
     access_token = get_access_token()
