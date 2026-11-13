@@ -16,6 +16,7 @@ import requests
 if len(sys.argv) < 2:
     print(f"Example run: {sys.argv[0]} \"TUYA_DEVICE_ID\" \"-send-metrics\"")
     print(f"Example run: {sys.argv[0]} \"TUYA_DEVICE_ID\" \"-discovery\"")
+    print(f"Example run: {sys.argv[0]} \"TUYA_DEVICE_ID\" \"-raw\"")
     sys.exit()
 
 config_path = Path(__file__).resolve().parent / "tuya.conf"
@@ -217,6 +218,76 @@ def send_to_zabbix(values: dict):
     print(process.stdout, end='', flush=True)
 
 
+def device_metrics_to_text(statuses):
+    """
+    Преобразует ответ Tuya со статусами устройства в читаемый текст.
+
+    statuses должен иметь формат:
+    [
+        {
+            "code": "switch_1",
+            "value": true,
+            " t": 123456789
+        },
+        ...
+    ]
+
+    Возвращает строку.
+    """
+
+    if not statuses:
+        return "Tuya не вернула метрики устройства"
+
+    lines = []
+
+    for item in statuses:
+        code = item.get("code", "unknown")
+        value = item.get("value")
+
+        # Дополнительные поля Tuya, если они присутствуют
+        extra = []
+
+        if "value" not in item:
+            value = "<нет значения>"
+
+        if "unit" in item:
+            extra.append(f"единица={item['unit']}")
+
+        if "t" in item:
+            extra.append(f"время={item['t']}")
+
+        suffix = f" ({', '.join(extra)})" if extra else ""
+
+        lines.append(f"{code}: {value}{suffix}")
+
+    return "\n".join(lines)
+
+
+def print_device_metrics(base_url, access_token, device_id):
+    statuses = get_device_status(
+        base_url=base_url,
+        access_token=access_token,
+        device_id=device_id,
+    )
+
+    text = device_metrics_to_text(statuses)
+    print(text)
+
+    return text
+
+
+def device_metrics_to_json(statuses):
+    """
+    Возвращает все datapoint'ы устройства в виде JSON-текста.
+    """
+
+    return json.dumps(
+        statuses,
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
 def main():
     base_url = TUYA_BASE_URLS[TUYA_REGION]
 
@@ -226,6 +297,8 @@ def main():
     # Полезно на первом запуске посмотреть полный список datapoint'ов.
     if ("-discovery" == sys.argv[2]):
         print(json.dumps(statuses, ensure_ascii=False, sort_keys=True, indent=2))
+    if ("-raw" == sys.argv[2]):
+        print(device_metrics_to_json(statuses))
     else:
         values = {}
 
