@@ -9,8 +9,14 @@ import sys
 import time
 from urllib.parse import urlparse
 from pathlib import Path
+from datetime import datetime
 
 import requests
+
+if len(sys.argv) < 2:
+    print(f"Example run: {sys.argv[0]} \"TUYA_DEVICE_ID\" \"-send-metrics\"")
+    print(f"Example run: {sys.argv[0]} \"TUYA_DEVICE_ID\" \"-discovery\"")
+    sys.exit()
 
 config_path = Path(__file__).resolve().parent / "tuya.conf"
 config = {}
@@ -179,6 +185,9 @@ def send_to_zabbix(values: dict):
     """
     Передача метрик через zabbix_sender.
     """
+    today = datetime.now()
+    format_date = today.strftime("%d.%m.%Y %H:%M:%S")
+    print(f"{format_date} - TUYA_DEVICE_ID={TUYA_DEVICE_ID} - ", end='', flush=True)
     payload = []
 
     for key, value in values.items():
@@ -205,7 +214,7 @@ def send_to_zabbix(values: dict):
             + process.stderr
         )
 
-    print(process.stdout)
+    print(process.stdout, end='', flush=True)
 
 
 def main():
@@ -215,29 +224,30 @@ def main():
     statuses = get_device_status(base_url, access_token, TUYA_DEVICE_ID)
 
     # Полезно на первом запуске посмотреть полный список datapoint'ов.
-    # print(json.dumps(statuses, ensure_ascii=False, indent=2))
+    if ("-discovery" == sys.argv[2]):
+        print(json.dumps(statuses, ensure_ascii=False, sort_keys=True, indent=2))
+    else:
+        values = {}
 
-    values = {}
+        for item in statuses:
+            code = item.get("code")
+            value = item.get("value")
 
-    for item in statuses:
-        code = item.get("code")
-        value = item.get("value")
+            if not code:
+                continue
 
-        if not code:
-            continue
+            # В Zabbix ключ будет выглядеть, например:
+            # tuya.raw[abcdef123456,va_temperature]
+            zabbix_key = f"tuya.raw[{code}]"
 
-        # В Zabbix ключ будет выглядеть, например:
-        # tuya.raw[abcdef123456,va_temperature]
-        zabbix_key = f"tuya.raw[{code}]"
+            normalized = normalize_value(value)
 
-        normalized = normalize_value(value)
+            # Передаём только числовые значения.
+            if isinstance(normalized, (int, float)):
+                values[zabbix_key] = normalized
 
-        # Передаём только числовые значения.
-        if isinstance(normalized, (int, float)):
-            values[zabbix_key] = normalized
-
-    if values:
-        send_to_zabbix(values)
+        if values:
+            send_to_zabbix(values)
 
 
 if __name__ == "__main__":
